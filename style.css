@@ -4,356 +4,1565 @@
     padding: 0;
 }
 
+:root {
+
+    --background: #02050d;
+    --panel: #07101e;
+    --panel2: #0b1729;
+
+    --border: rgba(150,210,255,.14);
+
+    --text: #f4f8ff;
+    --muted: #8493aa;
+
+    --cyan: #50dcff;
+    --blue: #5795ff;
+
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #030712;
-    color: white;
-    min-height: 100vh;
+
+    background:
+
+        radial-gradient(
+            circle at 50% -10%,
+            #143461,
+            transparent 40%
+        ),
+
+        var(--background);
+
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     overflow-x: hidden;
 }
 
-/* HEADER */
 
-header {
-    height: 70px;
+/* ================= HEADER ================= */
+
+.topbar {
+
+    height: 76px;
+
+    padding:
+        0 32px;
+
     display: flex;
+
+    justify-content:
+        space-between;
+
     align-items: center;
-    justify-content: space-between;
-    padding: 0 25px;
-    background: rgba(3, 7, 18, 0.9);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
 
-.logo {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 4px;
-}
+    position: sticky;
 
-.header-buttons {
-    display: flex;
-    gap: 10px;
-}
+    top: 0;
 
-button {
-    background: rgba(255,255,255,0.08);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 10px 15px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: rgba(255,255,255,0.16);
-}
-
-/* MAIN */
-
-main {
-    max-width: 1300px;
-    margin: auto;
-    padding: 25px;
-}
-
-/* SKY */
-
-.sky-container {
-    display: flex;
-    justify-content: center;
-}
-
-.sky-map {
-    position: relative;
-    width: min(80vw, 720px);
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    overflow: hidden;
+    z-index: 1000;
 
     background:
-        radial-gradient(circle at center,
-        #17233e 0%,
-        #0b1428 45%,
-        #02050c 100%);
+        rgba(2,5,13,.86);
 
-    border: 2px solid rgba(100,200,255,0.25);
+    backdrop-filter:
+        blur(20px);
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.brand img {
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
 
     box-shadow:
-        0 0 80px rgba(0,150,255,0.12),
-        inset 0 0 100px rgba(0,0,0,0.8);
+        0 0 22px
+        rgba(70,200,255,.35);
+
 }
 
-/* STARS */
+
+.brand h1 {
+
+    font-size: 17px;
+
+    letter-spacing: 3px;
+
+}
+
+
+.brand p {
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    color:
+        var(--cyan);
+
+    margin-top: 4px;
+
+}
+
+
+.top-actions {
+
+    display: flex;
+
+    gap: 8px;
+
+}
+
+
+button {
+
+    font-family: inherit;
+
+    color: white;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid var(--border);
+
+    padding:
+        10px 14px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        .2s;
+
+}
+
+
+button:hover {
+
+    border-color:
+        rgba(80,220,255,.5);
+
+    background:
+        rgba(80,220,255,.1);
+
+}
+
+
+/* ================= HERO ================= */
+
+.hero {
+
+    min-height:
+        560px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding:
+        70px 20px;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            rgba(50,120,220,.16),
+            transparent 55%
+        );
+
+}
+
+
+.hero-content {
+
+    max-width: 850px;
+
+}
+
+
+.eyebrow {
+
+    color:
+        var(--cyan);
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.hero h2 {
+
+    font-size:
+        clamp(42px,8vw,88px);
+
+    line-height: .92;
+
+    letter-spacing:
+        -5px;
+
+}
+
+
+.hero h2 span {
+
+    color:
+        var(--cyan);
+
+    text-shadow:
+        0 0 30px
+        rgba(80,220,255,.25);
+
+}
+
+
+.hero-content > p:not(.eyebrow) {
+
+    color:
+        var(--muted);
+
+    max-width: 580px;
+
+    margin:
+        28px auto;
+
+    line-height: 1.7;
+
+}
+
+
+.explore-btn {
+
+    padding:
+        14px 22px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(80,220,255,.12);
+
+    border-color:
+        rgba(80,220,255,.35);
+
+}
+
+
+/* ================= SKY PANEL ================= */
+
+.sky-panel {
+
+    width:
+        min(1250px,94%);
+
+    margin:
+        0 auto 100px;
+
+    padding:
+        25px;
+
+    background:
+        rgba(5,13,27,.8);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 40px 100px
+        rgba(0,0,0,.4);
+
+}
+
+
+.panel-header {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.small-label,
+.card-label {
+
+    color:
+        var(--muted);
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.panel-header h2 {
+
+    font-size: 22px;
+
+    margin-top: 5px;
+
+}
+
+
+.map-actions {
+
+    display: flex;
+
+    gap: 7px;
+
+}
+
+
+/* ================= SKY MAP ================= */
+
+.sky-map {
+
+    width:
+        min(78vw,760px);
+
+    aspect-ratio: 1;
+
+    margin:
+        auto;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    cursor: grab;
+
+    touch-action: none;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            #263b61,
+            #101d36 45%,
+            #050b16 78%,
+            #010208
+        );
+
+    border:
+        2px solid
+        rgba(100,210,255,.25);
+
+    box-shadow:
+
+        0 0 100px
+        rgba(40,150,255,.16),
+
+        inset 0 0 100px
+        rgba(0,0,0,.85);
+
+    transition:
+        transform .25s;
+
+}
+
+
+.sky-map:active {
+
+    cursor: grabbing;
+
+}
+
+
+/* ================= STARS ================= */
 
 .stars {
+
     position: absolute;
+
     inset: 0;
+
+    z-index: 2;
+
 }
+
 
 .star {
+
     position: absolute;
-    width: 3px;
-    height: 3px;
-    background: white;
+
     border-radius: 50%;
-    box-shadow: 0 0 5px white;
+
+    background: white;
+
+    box-shadow:
+        0 0 6px white;
+
 }
 
-/* DIRECTIONS */
 
-.direction {
+/* ================= MILKY WAY ================= */
+
+.milky-way {
+
     position: absolute;
-    font-weight: bold;
-    font-size: 20px;
-    z-index: 20;
+
+    width: 130%;
+
+    height: 25%;
+
+    left: -15%;
+
+    top: 38%;
+
+    transform:
+        rotate(-25deg);
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(190,210,255,.08),
+            rgba(255,255,255,.16),
+            rgba(150,180,255,.06),
+            transparent
+        );
+
+    filter:
+        blur(20px);
+
+    z-index: 1;
+
 }
 
-.north {
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-}
 
-.south {
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.east {
-    right: 18px;
-    top: 50%;
-}
-
-.west {
-    left: 18px;
-    top: 50%;
-}
-
-/* ZENITH */
-
-.zenith {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 11px;
-    letter-spacing: 2px;
-    opacity: 0.4;
-}
-
-/* CONSTELLATION */
-
-.constellation {
-    position: absolute;
-    color: #9be7ff;
-    font-size: 28px;
-    z-index: 5;
-}
-
-.constellation span {
-    font-size: 14px;
-    display: block;
-    letter-spacing: 3px;
-}
-
-/* PLANETS */
-
-.planet {
-    position: absolute;
-    z-index: 15;
-    color: #ffe6a3;
-    font-size: 25px;
-}
-
-.planet span {
-    font-size: 14px;
-    margin-left: 5px;
-}
-
-.venus {
-    right: 20%;
-    top: 45%;
-}
-
-/* MOON */
-
-.moon {
-    position: absolute;
-    left: 25%;
-    top: 25%;
-    font-size: 30px;
-    z-index: 15;
-}
-
-.moon span {
-    font-size: 14px;
-}
-
-/* CLOUD SYSTEM */
+/* ================= CLOUDS ================= */
 
 .cloud-layer {
+
     position: absolute;
+
     inset: 0;
+
     z-index: 10;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
+
+    transition:
+        opacity .4s;
+
 }
 
+
 .cloud {
+
     position: absolute;
 
     background:
+
         radial-gradient(
-            ellipse at center,
-            rgba(210,225,240,0.30),
-            rgba(130,150,170,0.18) 45%,
+            ellipse,
+            rgba(215,230,245,.43),
+            rgba(120,145,170,.28) 45%,
             transparent 75%
         );
 
-    filter: blur(12px);
-    opacity: 0.8;
+    filter:
+        blur(13px);
+
 }
 
-/* LEFT CLOUD */
 
-.cloud-1 {
-    width: 48%;
-    height: 35%;
-    left: -8%;
-    top: 10%;
-}
+.cloud-west {
 
-/* RIGHT CLOUD */
-
-.cloud-2 {
-    width: 45%;
-    height: 40%;
-    right: -10%;
-    top: 20%;
-}
-
-/* BOTTOM CLOUD */
-
-.cloud-3 {
     width: 55%;
-    height: 30%;
+
+    height: 38%;
+
+    left: -17%;
+
+    top: 15%;
+
+    transform:
+        rotate(-12deg);
+
+}
+
+
+.cloud-east {
+
+    width: 48%;
+
+    height: 42%;
+
+    right: -13%;
+
+    top: 22%;
+
+    transform:
+        rotate(13deg);
+
+}
+
+
+.cloud-south {
+
+    width: 60%;
+
+    height: 28%;
+
     right: -10%;
+
     bottom: -5%;
+
 }
 
-/* TOP CLOUD */
 
-.cloud-4 {
-    width: 35%;
+/* CLOUD HOLES */
+
+.cloud-hole {
+
+    position: absolute;
+
+    width: 24%;
+
     height: 25%;
-    left: 30%;
-    top: -8%;
+
+    left: 35%;
+
+    top: 35%;
+
+    border-radius: 50%;
+
+    background:
+        rgba(4,9,20,.8);
+
+    filter:
+        blur(4px);
+
 }
 
-/* DASHBOARD */
 
-.dashboard {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
-    margin-top: 25px;
+.hole2 {
+
+    width: 15%;
+
+    height: 18%;
+
+    left: 65%;
+
+    top: 20%;
+
 }
 
-.glass-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 18px;
-    padding: 22px;
-    backdrop-filter: blur(15px);
-}
 
-.glass-card h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
+/* ================= COMPASS ================= */
 
-/* SCORE */
+.compass {
 
-.score {
-    font-size: 55px;
+    position: absolute;
+
+    z-index: 30;
+
     font-weight: bold;
+
+    color:
+        #ff8790;
+
+    text-shadow:
+        0 0 10px black;
+
 }
 
-.score small {
-    font-size: 20px;
-    opacity: 0.5;
+
+.north {
+
+    top: 18px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
 }
 
-.clarity-card p {
-    opacity: 0.65;
-    margin-top: 5px;
+
+.south {
+
+    bottom: 18px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
 }
 
-/* WEATHER */
 
-.weather-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+.east {
+
+    right: 20px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
 }
 
-.weather-grid div {
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 12px;
+
+.west {
+
+    left: 20px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
 }
 
-.weather-grid span {
+
+/* ================= CELESTIAL OBJECTS ================= */
+
+.celestial {
+
+    position: absolute;
+
+    z-index: 25;
+
+    text-align: center;
+
+}
+
+
+.celestial span {
+
     display: block;
+
+    font-size: 10px;
+
+    margin-top: 5px;
+
+}
+
+
+.moon {
+
+    left: 23%;
+
+    top: 22%;
+
+}
+
+
+.moon-body {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            white,
+            #aab2c4
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(255,255,255,.4);
+
+}
+
+
+.jupiter {
+
+    right: 24%;
+
+    top: 33%;
+
+}
+
+
+.jupiter-body {
+
+    width: 31px;
+
+    height: 31px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            #d9b983,
+            #7f5f43,
+            #c9a06b,
+            #75553e
+        );
+
+    box-shadow:
+        0 0 15px
+        rgba(255,200,120,.3);
+
+}
+
+
+.venus {
+
+    right: 30%;
+
+    bottom: 28%;
+
+}
+
+
+.venus-body {
+
+    width: 24px;
+
+    height: 24px;
+
+    border-radius: 50%;
+
+    background:
+        #e7c874;
+
+    box-shadow:
+        0 0 15px
+        rgba(255,220,120,.5);
+
+}
+
+
+/* ================= ORION ================= */
+
+.constellation {
+
+    position: absolute;
+
+    left: 42%;
+
+    top: 43%;
+
+    width: 110px;
+
+    height: 100px;
+
+    z-index: 20;
+
+}
+
+
+.orion-star {
+
+    position: absolute;
+
+    color:
+        #aeeaff;
+
+    font-size: 22px;
+
+    text-shadow:
+        0 0 12px #70ddff;
+
+}
+
+
+.o1 {
+    left: 5px;
+    top: 5px;
+}
+
+.o2 {
+    right: 8px;
+    top: 20px;
+}
+
+.o3 {
+    left: 45px;
+    bottom: 20px;
+}
+
+.o4 {
+    right: 5px;
+    bottom: 2px;
+}
+
+
+.orion-line {
+
+    position: absolute;
+
+    height: 1px;
+
+    background:
+        rgba(130,220,255,.55);
+
+    transform-origin: left;
+
+}
+
+
+.line1 {
+
+    width: 65px;
+
+    left: 15px;
+
+    top: 15px;
+
+    transform:
+        rotate(18deg);
+
+}
+
+
+.line2 {
+
+    width: 60px;
+
+    left: 50px;
+
+    top: 35px;
+
+    transform:
+        rotate(80deg);
+
+}
+
+
+.line3 {
+
+    width: 45px;
+
+    left: 48px;
+
+    top: 70px;
+
+    transform:
+        rotate(-30deg);
+
+}
+
+
+.constellation > span {
+
+    position: absolute;
+
+    bottom: -10px;
+
+    left: 25px;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+
+}
+
+
+/* ================= ZENITH ================= */
+
+.zenith {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    color:
+        rgba(255,255,255,.22);
+
+    font-size: 8px;
+
+    letter-spacing: 3px;
+
+}
+
+
+/* ================= SKY CONTROLS ================= */
+
+.sky-controls {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    margin:
+        18px 0;
+
+}
+
+
+.sky-controls span {
+
+    color:
+        var(--muted);
+
+    font-size: 10px;
+
+    margin-left: 10px;
+
+}
+
+
+/* ================= TIMELINE ================= */
+
+.timeline {
+
+    padding:
+        18px 5px 5px;
+
+    border-top:
+        1px solid var(--border);
+
+}
+
+
+.timeline-top {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    margin-bottom: 12px;
+
     font-size: 12px;
-    opacity: 0.5;
-    margin-bottom: 5px;
+
 }
 
-.weather-grid strong {
-    font-size: 17px;
+
+.timeline-top span {
+
+    color:
+        var(--cyan);
+
 }
 
-/* FOOTER CONTROLS */
+
+#timeSlider {
+
+    width: 100%;
+
+    accent-color:
+        var(--cyan);
+
+    cursor: pointer;
+
+}
+
+
+.time-labels {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    color:
+        var(--muted);
+
+    font-size: 9px;
+
+    margin-top: 8px;
+
+}
+
+
+/* ================= FULLSCREEN ================= */
+
+.sky-panel.maximized {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
+    margin: 0;
+
+    border-radius: 0;
+
+    z-index: 5000;
+
+    overflow: auto;
+
+    background:
+        #01040a;
+
+}
+
+
+.sky-panel.maximized .sky-map {
+
+    width:
+        min(82vh,82vw);
+
+}
+
+
+.sky-panel.maximized .panel-header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+}
+
+
+/* ================= CONTENT ================= */
+
+.content {
+
+    width:
+        min(1100px,92%);
+
+    margin:
+        auto;
+
+}
+
+
+.dashboard-section {
+
+    padding:
+        80px 0;
+
+}
+
+
+.section-heading p {
+
+    color:
+        var(--cyan);
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+}
+
+
+.section-heading h2 {
+
+    font-size:
+        clamp(28px,4vw,46px);
+
+    margin-top: 8px;
+
+}
+
+
+/* ================= DASHBOARD ================= */
+
+.dashboard-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 18px;
+
+    margin-top: 25px;
+
+}
+
+
+.card {
+
+    background:
+        var(--panel);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+}
+
+
+.big-score {
+
+    margin:
+        15px 0;
+
+}
+
+
+.big-score strong {
+
+    font-size: 65px;
+
+}
+
+
+.big-score span {
+
+    color:
+        var(--muted);
+
+}
+
+
+.card p {
+
+    color:
+        var(--muted);
+
+}
+
+
+.progress {
+
+    height: 6px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    margin-top: 20px;
+
+    border-radius: 20px;
+
+}
+
+
+#clarityBar {
+
+    height: 100%;
+
+    width: 79%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #318dff,
+            #5dffc5
+        );
+
+    border-radius: inherit;
+
+}
+
+
+.visibility-list {
+
+    margin-top: 15px;
+
+}
+
+
+.visibility-list div {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    padding:
+        14px 0;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.visibility-list strong {
+
+    color:
+        #68e9ff;
+
+}
+
+
+/* ================= CLOUD CARDS ================= */
+
+.cloud-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 15px;
+
+    margin-top: 25px;
+
+}
+
+
+.cloud-card {
+
+    padding:
+        25px;
+
+    border:
+        1px solid var(--border);
+
+    background:
+        var(--panel);
+
+    border-radius: 18px;
+
+}
+
+
+.cloud-card span {
+
+    color:
+        var(--muted);
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.cloud-card strong {
+
+    display: block;
+
+    font-size: 42px;
+
+    margin:
+        15px 0;
+
+}
+
+
+.cloud-card small {
+
+    color:
+        var(--muted);
+
+}
+
+
+.mini-bar {
+
+    height: 5px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border-radius: 10px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.mini-bar i {
+
+    display: block;
+
+    height: 100%;
+
+    background:
+        var(--cyan);
+
+    border-radius: inherit;
+
+}
+
+
+/* ================= OBJECTS ================= */
+
+.objects {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap: 12px;
+
+    margin-top: 25px;
+
+}
+
+
+.object {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    text-align: left;
+
+    padding: 18px;
+
+}
+
+
+.object-icon {
+
+    font-size: 25px;
+
+}
+
+
+.object small {
+
+    display: block;
+
+    color:
+        var(--muted);
+
+    margin-top: 4px;
+
+}
+
+
+/* ================= INFO ================= */
+
+.info-section {
+
+    padding:
+        100px 0;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 50px;
+
+    border-top:
+        1px solid var(--border);
+
+}
+
+
+.info-section h2 {
+
+    font-size:
+        clamp(30px,4vw,50px);
+
+}
+
+
+.info-section > p {
+
+    color:
+        var(--muted);
+
+    line-height: 1.8;
+
+}
+
+
+/* ================= FOOTER ================= */
 
 footer {
+
+    padding:
+        30px 5%;
+
     display: flex;
-    justify-content: center;
-    gap: 12px;
-    padding: 25px;
+
+    justify-content:
+        space-between;
+
+    border-top:
+        1px solid var(--border);
+
+    color:
+        var(--muted);
+
+    font-size: 11px;
+
 }
 
-/* MOBILE */
 
-@media (max-width: 700px) {
+/* ================= MOBILE ================= */
 
-    header {
-        padding: 0 15px;
+@media(max-width:750px) {
+
+    .topbar {
+
+        padding:
+            0 14px;
+
     }
 
-    .logo {
-        font-size: 17px;
-        letter-spacing: 2px;
+
+    .brand img {
+
+        width: 38px;
+        height: 38px;
+
     }
 
-    main {
-        padding: 12px;
+
+    .brand h1 {
+
+        font-size: 13px;
+
     }
+
+
+    .brand p {
+
+        display: none;
+
+    }
+
+
+    .top-actions button {
+
+        padding: 8px;
+
+        font-size: 10px;
+
+    }
+
+
+    .hero {
+
+        min-height:
+            480px;
+
+    }
+
+
+    .hero h2 {
+
+        letter-spacing:
+            -3px;
+
+    }
+
+
+    .sky-panel {
+
+        padding:
+            12px;
+
+        border-radius:
+            18px;
+
+    }
+
+
+    .panel-header {
+
+        align-items:
+            flex-start;
+
+    }
+
+
+    .map-actions button {
+
+        padding:
+            8px;
+
+    }
+
 
     .sky-map {
-        width: 94vw;
+
+        width:
+            94vw;
+
     }
 
-    .dashboard {
-        grid-template-columns: 1fr;
+
+    .dashboard-grid,
+    .info-section {
+
+        grid-template-columns:
+            1fr;
+
     }
 
-    .weather-grid {
-        grid-template-columns: repeat(2, 1fr);
+
+    .cloud-grid {
+
+        grid-template-columns:
+            1fr;
+
     }
+
+
+    .objects {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
 
     footer {
-        flex-wrap: wrap;
+
+        flex-direction:
+            column;
+
+        gap: 10px;
+
+        text-align: center;
+
     }
+
 }
