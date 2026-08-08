@@ -1,837 +1,375 @@
-/* =====================================
-   COSMO VISION
-   Main Application
-===================================== */
+// ==========================================
+// COSMO VISION - MAIN APPLICATION
+// ==========================================
+
+const skyMap = document.getElementById("skyMap");
+const starsContainer = document.getElementById("stars");
+const cloudLayer = document.getElementById("cloudLayer");
 
 
-/* ---------- CELESTIAL DATABASE ---------- */
+// ==========================================
+// GENERATE STARS
+// ==========================================
 
-const knownObjects = [
+function generateStars() {
 
-    {
-        name: "Sun",
-        type: "STAR",
-        ra: 0,
-        dec: 0,
-        description: "The star at the center of our Solar System."
-    },
+    starsContainer.innerHTML = "";
 
-    {
-        name: "Moon",
-        type: "MOON",
-        ra: 6,
-        dec: 20,
-        description: "Earth's natural satellite."
-    },
+    const numberOfStars = 180;
 
-    {
-        name: "Mercury",
-        type: "PLANET",
-        ra: 8,
-        dec: 5,
-        description: "The smallest planet in the Solar System."
-    },
+    for (let i = 0; i < numberOfStars; i++) {
 
-    {
-        name: "Venus",
-        type: "PLANET",
-        ra: 10,
-        dec: 12,
-        description: "The second planet from the Sun."
-    },
+        const star = document.createElement("div");
 
-    {
-        name: "Mars",
-        type: "PLANET",
-        ra: 12,
-        dec: -5,
-        description: "The red planet."
-    },
+        star.className = "star";
 
-    {
-        name: "Jupiter",
-        type: "PLANET",
-        ra: 15,
-        dec: -10,
-        description: "The largest planet in our Solar System."
-    },
+        // Keep stars inside the circular sky
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.sqrt(Math.random()) * 48;
 
-    {
-        name: "Saturn",
-        type: "PLANET",
-        ra: 18,
-        dec: -15,
-        description: "The famous ringed planet."
-    },
+        const x = 50 + radius * Math.cos(angle);
+        const y = 50 + radius * Math.sin(angle);
 
-    {
-        name: "Sirius",
-        type: "STAR",
-        ra: 6.75,
-        dec: -16.7,
-        description: "The brightest star in Earth's night sky."
-    },
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
 
-    {
-        name: "Betelgeuse",
-        type: "STAR",
-        ra: 5.92,
-        dec: 7.4,
-        description: "A red supergiant in Orion."
-    },
+        const size = Math.random() * 2.5 + 1;
 
-    {
-        name: "Rigel",
-        type: "STAR",
-        ra: 5.24,
-        dec: -8.2,
-        description: "A blue supergiant in Orion."
-    },
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
 
-    {
-        name: "Vega",
-        type: "STAR",
-        ra: 18.62,
-        dec: 38.8,
-        description: "One of the brightest stars in the northern sky."
-    },
+        star.style.opacity = Math.random() * 0.7 + 0.3;
 
-    {
-        name: "Polaris",
-        type: "STAR",
-        ra: 2.53,
-        dec: 89.2,
-        description: "The North Star."
-    },
-
-    {
-        name: "M31 Andromeda Galaxy",
-        type: "GALAXY",
-        ra: 0.71,
-        dec: 41.3,
-        description: "The nearest major galaxy to the Milky Way."
-    },
-
-    {
-        name: "M42 Orion Nebula",
-        type: "NEBULA",
-        ra: 5.59,
-        dec: -5.45,
-        description: "A bright stellar nursery in Orion."
-    },
-
-    {
-        name: "M45 Pleiades",
-        type: "STAR CLUSTER",
-        ra: 3.79,
-        dec: 24.1,
-        description: "A famous open star cluster."
-    },
-
-    {
-        name: "M13 Hercules Cluster",
-        type: "GLOBULAR CLUSTER",
-        ra: 16.69,
-        dec: 36.5,
-        description: "A bright globular cluster in Hercules."
+        starsContainer.appendChild(star);
     }
-
-];
-
-
-/* ---------- CREATE LARGE SEARCHABLE CATALOG ---------- */
-
-/*
-   Creates a local demonstration catalog containing
-   more than 1000 searchable objects.
-
-   For scientifically precise positions, replace this
-   catalog later with Gaia / SIMBAD / NASA data.
-*/
-
-const objects = [...knownObjects];
-
-for (let i = objects.length; i <= 1200; i++) {
-
-    objects.push({
-
-        name: `Cosmo Object ${i}`,
-
-        type: [
-            "STAR",
-            "GALAXY",
-            "NEBULA",
-            "STAR CLUSTER"
-        ][i % 4],
-
-        ra: Math.random() * 24,
-
-        dec: Math.random() * 180 - 90,
-
-        description:
-            "Celestial object from the Cosmo Vision discovery catalog."
-
-    });
-
 }
 
+generateStars();
 
-/* ---------- CANVAS ---------- */
 
-const canvas = document.getElementById("skyCanvas");
+// ==========================================
+// CLOUD TOGGLE
+// ==========================================
 
-const ctx = canvas.getContext("2d");
+const cloudToggle = document.getElementById("cloudToggle");
 
-let cloudVisible = true;
-let starsVisible = true;
+let cloudsVisible = true;
 
-function resizeCanvas() {
+cloudToggle.addEventListener("click", () => {
 
-    canvas.width = canvas.clientWidth * devicePixelRatio;
+    cloudsVisible = !cloudsVisible;
 
-    canvas.height = canvas.clientHeight * devicePixelRatio;
+    cloudLayer.style.opacity = cloudsVisible ? "1" : "0";
 
-    ctx.scale(devicePixelRatio, devicePixelRatio);
+    cloudToggle.textContent =
+        cloudsVisible ? "☁️ Clouds" : "☁️ Clouds OFF";
+});
 
-    drawSky();
-}
 
-window.addEventListener("resize", resizeCanvas);
+// ==========================================
+// CONSTELLATION TOGGLE
+// ==========================================
 
+const constellationToggle =
+    document.getElementById("constellationToggle");
 
-/* ---------- STARS ---------- */
+const constellation =
+    document.querySelector(".constellation");
 
-let stars = [];
+let constellationsVisible = true;
 
-for (let i = 0; i < 450; i++) {
+constellationToggle.addEventListener("click", () => {
 
-    stars.push({
+    constellationsVisible = !constellationsVisible;
 
-        x: Math.random(),
-        y: Math.random(),
+    constellation.style.display =
+        constellationsVisible ? "block" : "none";
 
-        size: Math.random() * 2 + .3,
+    constellationToggle.textContent =
+        constellationsVisible
+            ? "✨ Constellations"
+            : "✨ Constellations OFF";
+});
 
-        brightness: Math.random()
 
-    });
+// ==========================================
+// RESET SKY
+// ==========================================
 
-}
+const resetBtn = document.getElementById("resetBtn");
 
+resetBtn.addEventListener("click", () => {
 
-/* ---------- SKY DRAWING ---------- */
+    skyMap.style.transform = "rotate(0deg) scale(1)";
 
-function drawSky() {
-
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-
-    ctx.clearRect(0,0,w,h);
-
-
-    /* Background */
-
-    const gradient =
-        ctx.createRadialGradient(
-            w/2,
-            h/2,
-            20,
-            w/2,
-            h/2,
-            w
-        );
-
-    gradient.addColorStop(0, "#162c50");
-    gradient.addColorStop(0.5, "#081226");
-    gradient.addColorStop(1, "#02040b");
-
-    ctx.fillStyle = gradient;
-
-    ctx.fillRect(0,0,w,h);
-
-
-    /* Stars */
-
-    if (starsVisible) {
-
-        stars.forEach(star => {
-
-            ctx.beginPath();
-
-            ctx.arc(
-                star.x * w,
-                star.y * h,
-                star.size,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fillStyle =
-                `rgba(255,255,255,${.35 + star.brightness * .65})`;
-
-            ctx.fill();
-
-        });
-
-    }
-
-
-    /* Important objects */
-
-    drawPlanet(w*.76, h*.34, 9, "#d9d9d9", "Venus");
-
-    drawPlanet(w*.46, h*.48, 7, "#ffcb78", "Jupiter");
-
-    drawPlanet(w*.25, h*.27, 6, "#f0f0e8", "Polaris");
-
-
-    /* Clouds */
-
-    if (cloudVisible) {
-
-        drawClouds(w,h);
-
-    }
-
-}
-
-
-/* ---------- CLOUD LAYER ---------- */
-
-function drawClouds(w,h) {
-
-    /*
-       Cloud banks deliberately leave transparent
-       holes so stars remain visible.
-    */
-
-    const cloudGradient =
-        ctx.createLinearGradient(0,0,w,0);
-
-    cloudGradient.addColorStop(
-        0,
-        "rgba(120,135,165,.48)"
-    );
-
-    cloudGradient.addColorStop(
-        .35,
-        "rgba(100,120,150,.20)"
-    );
-
-    cloudGradient.addColorStop(
-        .55,
-        "rgba(100,120,150,0)"
-    );
-
-    cloudGradient.addColorStop(
-        .75,
-        "rgba(100,120,150,.35)"
-    );
-
-    cloudGradient.addColorStop(
-        1,
-        "rgba(120,135,165,.55)"
-    );
-
-
-    ctx.fillStyle = cloudGradient;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,h*.18);
-
-    ctx.bezierCurveTo(
-        w*.12,h*.05,
-        w*.25,h*.30,
-        w*.38,h*.15
-    );
-
-    ctx.bezierCurveTo(
-        w*.52,h*.05,
-        w*.62,h*.20,
-        w*.75,h*.12
-    );
-
-    ctx.bezierCurveTo(
-        w*.88,h*.03,
-        w*.95,h*.20,
-        w,h*.10
-    );
-
-    ctx.lineTo(w,0);
-
-    ctx.lineTo(0,0);
-
-    ctx.closePath();
-
-    ctx.fill();
-
-
-    /* Lower cloud bank */
-
-    ctx.fillStyle =
-        "rgba(100,120,150,.27)";
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,h);
-
-    ctx.bezierCurveTo(
-        w*.15,h*.75,
-        w*.27,h*.90,
-        w*.40,h*.80
-    );
-
-    ctx.bezierCurveTo(
-        w*.58,h*.92,
-        w*.70,h*.73,
-        w*.82,h*.85
-    );
-
-    ctx.bezierCurveTo(
-        w*.92,h*.74,
-        w*.97,h*.87,
-        w,h*.78
-    );
-
-    ctx.lineTo(w,h);
-
-    ctx.closePath();
-
-    ctx.fill();
-
-}
-
-
-/* ---------- PLANETS ---------- */
-
-function drawPlanet(x,y,size,color,label) {
-
-    ctx.beginPath();
-
-    ctx.arc(x,y,size,0,Math.PI*2);
-
-    ctx.fillStyle = color;
-
-    ctx.shadowBlur = 15;
-
-    ctx.shadowColor = color;
-
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
-
-
-    if (starsVisible) {
-
-        ctx.fillStyle = "white";
-
-        ctx.font = "11px Arial";
-
-        ctx.fillText(label,x+12,y+4);
-
-    }
-
-}
-
-
-/* ---------- SEARCH ---------- */
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const results =
-    document.getElementById("searchResults");
-
-function searchObjects() {
-
-    const query =
-        searchInput.value
-        .trim()
-        .toLowerCase();
-
-    results.innerHTML = "";
-
-    if (!query) {
-
-        results.style.display = "none";
-
-        return;
-
-    }
-
-
-    const matches =
-        objects
-        .filter(obj =>
-            obj.name.toLowerCase().includes(query)
-        )
-        .slice(0,8);
-
-
-    matches.forEach(obj => {
-
-        const div =
-            document.createElement("div");
-
-        div.className = "result";
-
-        div.innerHTML =
-            `<b>${obj.name}</b>
-             <br>
-             <small>${obj.type}</small>`;
-
-        div.onclick = () => showObject(obj);
-
-        results.appendChild(div);
-
-    });
-
-
-    results.style.display =
-        matches.length ? "block" : "none";
-
-}
-
-
-searchInput.addEventListener(
-    "input",
-    searchObjects
-);
-
-document
-    .getElementById("searchBtn")
-    .addEventListener(
-        "click",
-        searchObjects
-);
-
-
-/* ---------- OBJECT INFORMATION ---------- */
-
-function showObject(obj) {
-
-    results.style.display = "none";
-
-    document
-        .getElementById("objectInfo")
-        .classList.remove("hidden");
-
-    document
-        .getElementById("objectName")
-        .textContent = obj.name;
-
-    document
-        .getElementById("objectType")
-        .textContent = obj.type;
-
-    document
-        .getElementById("objectDescription")
-        .textContent = obj.description;
-
-    document
-        .getElementById("objectRA")
-        .textContent = obj.ra.toFixed(2) + "h";
-
-    document
-        .getElementById("objectDEC")
-        .textContent = obj.dec.toFixed(2) + "°";
-
-}
-
-
-document
-    .getElementById("closeObject")
-    .onclick = () => {
-
-        document
-            .getElementById("objectInfo")
-            .classList.add("hidden");
-
-    };
-
-
-/* ---------- CLOUD TOGGLE ---------- */
-
-document
-    .getElementById("cloudBtn")
-    .onclick = () => {
-
-        cloudVisible = !cloudVisible;
-
-        drawSky();
-
-    };
-
-
-document
-    .getElementById("cloudToggle")
-    .onchange = e => {
-
-        cloudVisible = e.target.checked;
-
-        drawSky();
-
-    };
-
-
-/* ---------- STAR TOGGLE ---------- */
-
-document
-    .getElementById("starToggle")
-    .onchange = e => {
-
-        starsVisible = e.target.checked;
-
-        drawSky();
-
-    };
-
-
-/* ---------- SETTINGS ---------- */
-
-const settingsPanel =
-    document.getElementById("settingsPanel");
-
-function openSettings() {
-
-    settingsPanel.classList.add("open");
-
-}
-
-function closeSettings() {
-
-    settingsPanel.classList.remove("open");
-
-}
-
-document
-    .getElementById("settingsBtn")
-    .onclick = openSettings;
-
-document
-    .getElementById("settingsNavBtn")
-    .onclick = openSettings;
-
-document
-    .getElementById("closeSettings")
-    .onclick = closeSettings;
-
-
-/* ---------- LOCATION ---------- */
-
-function getLocation() {
-
-    if (!navigator.geolocation) {
-
-        alert("Location is not supported.");
-
-        return;
-
-    }
-
-    navigator.geolocation.getCurrentPosition(
-
-        position => {
-
-            const lat =
-                position.coords.latitude.toFixed(3);
-
-            const lon =
-                position.coords.longitude.toFixed(3);
-
-            alert(
-                `Cosmo Vision location:\nLatitude: ${lat}\nLongitude: ${lon}`
-            );
-
-        },
-
-        () => {
-
-            alert("Location permission was denied.");
-
-        }
-
-    );
-
-}
-
-document
-    .getElementById("locationBtn")
-    .onclick = getLocation;
-
-document
-    .getElementById("locationPermission")
-    .onclick = getLocation;
-
-
-/* ---------- CAMERA / AR ---------- */
-
-const cameraScreen =
-    document.getElementById("cameraScreen");
-
-const video =
-    document.getElementById("camera");
-
-
-async function openCamera() {
-
-    try {
-
-        const stream =
-            await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: "environment"
-                },
-                audio: false
-            });
-
-        video.srcObject = stream;
-
-        cameraScreen.classList.add("active");
-
-    }
-
-    catch(error) {
-
-        alert(
-            "Camera permission is required for AR Sky."
-        );
-
-    }
-
-}
-
-
-function closeCamera() {
-
-    if (video.srcObject) {
-
-        video.srcObject
-            .getTracks()
-            .forEach(track => track.stop());
-
-    }
-
-    cameraScreen.classList.remove("active");
-
-}
-
-
-document
-    .getElementById("arBtn")
-    .onclick = openCamera;
-
-document
-    .getElementById("arNavBtn")
-    .onclick = openCamera;
-
-document
-    .getElementById("cameraPermission")
-    .onclick = openCamera;
-
-document
-    .getElementById("closeCamera")
-    .onclick = closeCamera;
-
-
-/* ---------- TIMELINE ---------- */
-
-const slider =
-    document.getElementById("timeSlider");
-
-slider.addEventListener("input", () => {
-
-    const value =
-        Number(slider.value);
-
-    let text;
-
-    if (value === 0) {
-
-        text = "Tonight — Now";
-
-    } else if (value > 0) {
-
-        text = `Tonight +${value}h`;
-
-    } else {
-
-        text = `Tonight ${value}h`;
-
-    }
-
-    document
-        .getElementById("timeDisplay")
-        .textContent = text;
+    generateStars();
 
 });
 
 
-/* ---------- ORIENTATION ---------- */
+// ==========================================
+// SKY MAP DRAGGING
+// ==========================================
 
-document
-    .getElementById("orientationToggle")
-    .onchange = async e => {
+let dragging = false;
 
-        if (!e.target.checked) return;
+let startX = 0;
+let startY = 0;
 
-        if (
-            typeof DeviceOrientationEvent !==
-            "undefined" &&
-            typeof DeviceOrientationEvent
-                .requestPermission === "function"
-        ) {
+let rotationX = 0;
+let rotationY = 0;
 
-            try {
+skyMap.addEventListener("pointerdown", (event) => {
 
-                await DeviceOrientationEvent
-                    .requestPermission();
+    dragging = true;
 
-            }
+    startX = event.clientX;
+    startY = event.clientY;
 
-            catch {
+    skyMap.setPointerCapture(event.pointerId);
+});
 
-                alert(
-                    "Motion permission was denied."
-                );
+skyMap.addEventListener("pointermove", (event) => {
 
-            }
+    if (!dragging) return;
 
+    const movementX = event.clientX - startX;
+    const movementY = event.clientY - startY;
+
+    rotationY += movementX * 0.15;
+    rotationX -= movementY * 0.05;
+
+    skyMap.style.transform =
+        `perspective(900px)
+         rotateX(${rotationX}deg)
+         rotateY(${rotationY}deg)`;
+
+    startX = event.clientX;
+    startY = event.clientY;
+});
+
+skyMap.addEventListener("pointerup", () => {
+
+    dragging = false;
+
+});
+
+
+// ==========================================
+// MOUSE / TOUCH WHEEL ZOOM
+// ==========================================
+
+let zoom = 1;
+
+skyMap.addEventListener("wheel", (event) => {
+
+    event.preventDefault();
+
+    if (event.deltaY < 0) {
+        zoom += 0.05;
+    } else {
+        zoom -= 0.05;
+    }
+
+    zoom = Math.max(0.8, Math.min(1.6, zoom));
+
+    skyMap.style.transform =
+        `scale(${zoom})
+         rotateX(${rotationX}deg)
+         rotateY(${rotationY}deg)`;
+});
+
+
+// ==========================================
+// LOCATION
+// ==========================================
+
+const locationBtn =
+    document.getElementById("locationBtn");
+
+locationBtn.addEventListener("click", () => {
+
+    if (!navigator.geolocation) {
+
+        alert("Geolocation is not supported by your browser.");
+
+        return;
+    }
+
+    locationBtn.textContent = "📍 Finding...";
+
+    navigator.geolocation.getCurrentPosition(
+
+        (position) => {
+
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+            locationBtn.textContent = "📍 Location Found";
+
+            console.log(
+                "Latitude:",
+                latitude,
+                "Longitude:",
+                longitude
+            );
+
+            alert(
+                `Location found!\n\nLatitude: ${latitude.toFixed(4)}\nLongitude: ${longitude.toFixed(4)}`
+            );
+        },
+
+        () => {
+
+            locationBtn.textContent = "📍 Location";
+
+            alert(
+                "Location permission was not granted."
+            );
         }
+    );
+});
 
-        window.addEventListener(
-            "deviceorientation",
-            event => {
 
-                /*
-                   This is the foundation for
-                   phone-direction tracking.
+// ==========================================
+// SEARCH BUTTON
+// ==========================================
 
-                   Full astronomical coordinate
-                   conversion can be added later.
-                */
+const searchBtn =
+    document.getElementById("searchBtn");
 
-                const heading =
-                    event.alpha || 0;
+searchBtn.addEventListener("click", () => {
 
-                document
-                    .querySelector(".north")
-                    .style.transform =
-                    `rotate(${heading}deg)`;
-
-            }
+    const object =
+        prompt(
+            "Search the sky:\n\nTry: Moon, Venus, Orion"
         );
 
-    };
+    if (!object) return;
+
+    const search =
+        object.toLowerCase();
+
+    if (search.includes("venus")) {
+
+        document.getElementById("venus").scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        alert("Venus selected.");
+
+    } else if (search.includes("moon")) {
+
+        document.getElementById("moon").scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        alert("Moon selected.");
+
+    } else if (search.includes("orion")) {
+
+        constellation.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        alert("Orion selected.");
+
+    } else {
+
+        alert(
+            "Object not found in this prototype."
+        );
+    }
+});
 
 
-/* ---------- INITIALIZE ---------- */
+// ==========================================
+// DEMO CLOUD DATA
+// ==========================================
 
-resizeCanvas();
+const cloudData = {
+
+    total: 21,
+    low: 12,
+    mid: 25,
+    high: 18,
+    wind: 11,
+    direction: "NW"
+
+};
+
+document.getElementById("totalCloud").textContent =
+    cloudData.total + "%";
+
+document.getElementById("lowCloud").textContent =
+    cloudData.low + "%";
+
+document.getElementById("midCloud").textContent =
+    cloudData.mid + "%";
+
+document.getElementById("highCloud").textContent =
+    cloudData.high + "%";
+
+document.getElementById("wind").textContent =
+    cloudData.wind + " km/h";
+
+document.getElementById("windDirection").textContent =
+    cloudData.direction;
+
+
+// ==========================================
+// SKY CLARITY CALCULATION
+// ==========================================
+
+function calculateClarity(cloudPercentage) {
+
+    const score =
+        10 - (cloudPercentage / 10);
+
+    return Math.max(
+        0,
+        Math.min(10, score)
+    );
+}
+
+const clarity =
+    calculateClarity(cloudData.total);
+
+document.getElementById("clarityScore").textContent =
+    clarity.toFixed(1);
+
+if (clarity >= 8) {
+
+    document.getElementById("conditionText").textContent =
+        "Excellent conditions for stargazing";
+
+} else if (clarity >= 6) {
+
+    document.getElementById("conditionText").textContent =
+        "Good conditions for stargazing";
+
+} else if (clarity >= 4) {
+
+    document.getElementById("conditionText").textContent =
+        "Fair conditions — some clouds expected";
+
+} else {
+
+    document.getElementById("conditionText").textContent =
+        "Poor conditions for stargazing";
+}
+
+
+// ==========================================
+// DEBUG MESSAGE
+// ==========================================
 
 console.log(
-    "Cosmo Vision loaded with",
-    objects.length,
-    "searchable objects."
+    "🌌 Cosmo Vision initialized successfully."
 );
