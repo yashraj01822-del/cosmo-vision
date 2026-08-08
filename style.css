@@ -14,7 +14,7 @@ body, html {
     color: #ffffff;
 }
 
-/* Deep Space Map Background */
+/* Full-Screen Celestial Map Container */
 #celestial-map {
     width: 100vw;
     height: 100vh;
@@ -23,6 +23,12 @@ body, html {
     left: 0;
     z-index: 1;
     background: radial-gradient(circle at center, #0c1432 0%, #02040b 100%);
+}
+
+/* Fix D3 Celestial canvas sizing inside container */
+#celestial-map canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* AR Camera Feed Layer */
@@ -63,6 +69,10 @@ body, html {
     pointer-events: none;
     opacity: 0.45;
     transition: opacity 0.3s ease;
+}
+
+#cloud-canvas.hidden {
+    opacity: 0;
 }
 
 /* Top Bar Layout */
@@ -110,54 +120,6 @@ body, html {
 .icon-btn svg {
     width: 100%;
     height: 100%;
-}
-
-/* Cloud Settings Panel */
-.popup-panel {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 11;
-    background: rgba(10, 16, 30, 0.9);
-    border: 1px solid rgba(138, 180, 248, 0.3);
-    backdrop-filter: blur(12px);
-    padding: 16px 20px;
-    border-radius: 14px;
-    width: 280px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    transition: all 0.3s ease;
-}
-
-.popup-panel.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 15px);
-}
-
-.popup-panel h3 {
-    font-size: 0.8rem;
-    color: #8ab4f8;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 10px;
-}
-
-.control-group label {
-    font-size: 0.72rem;
-    color: #94a3b8;
-}
-
-input[type="range"] {
-    accent-color: #8ab4f8;
-    cursor: pointer;
 }
 
 /* Bottom Toolbar (Stellarium Style Pill) */
