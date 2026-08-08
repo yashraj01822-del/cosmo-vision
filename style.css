@@ -9,12 +9,12 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #02040a;
+    background-color: #02040b;
     font-family: 'Roboto', sans-serif;
-    color: #e0e6ed;
+    color: #ffffff;
 }
 
-/* Celestial Map Styling */
+/* Deep Space Map Background */
 #celestial-map {
     width: 100vw;
     height: 100vh;
@@ -22,22 +22,37 @@ body, html {
     top: 0;
     left: 0;
     z-index: 1;
-    background: radial-gradient(circle at center, #0a1128 0%, #02040a 100%);
+    background: radial-gradient(circle at center, #0c1432 0%, #02040b 100%);
 }
 
-/* Horizon Glow */
+/* AR Camera Feed Layer */
+#ar-camera-feed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+}
+
+#ar-camera-feed.hidden {
+    display: none;
+}
+
+/* Horizon Atmosphere Glow */
 #horizon-glow {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100vw;
-    height: 35vh;
-    background: linear-gradient(to top, rgba(16, 37, 66, 0.45) 0%, rgba(2, 4, 10, 0) 100%);
+    height: 30vh;
+    background: linear-gradient(to top, rgba(14, 32, 60, 0.5) 0%, rgba(2, 4, 11, 0) 100%);
     pointer-events: none;
     z-index: 2;
 }
 
-/* Dynamic Cloud Overlay Canvas */
+/* Cloud Canvas Overlay */
 #cloud-canvas {
     position: absolute;
     top: 0;
@@ -46,140 +61,84 @@ body, html {
     height: 100vh;
     z-index: 3;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.45;
     transition: opacity 0.3s ease;
 }
 
-/* Top Information Header Bar */
+/* Top Bar Layout */
 .top-bar {
     position: absolute;
-    top: 0;
+    top: 15px;
     left: 0;
     width: 100%;
-    padding: 12px 20px;
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(to bottom, rgba(5, 10, 20, 0.85), rgba(5, 10, 20, 0));
     z-index: 10;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
-.brand {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #4cc9f0;
-    letter-spacing: 2px;
-    text-shadow: 0 0 8px rgba(76, 201, 240, 0.6);
-}
-
-.location-time {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.speed-badge {
-    background: rgba(76, 201, 240, 0.2);
-    border: 1px solid rgba(76, 201, 240, 0.4);
-    color: #4cc9f0;
-    font-size: 0.75rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 500;
-}
-
-/* Stellarium Style Bottom Floating Toolbar */
-.bottom-toolbar {
-    position: absolute;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(10, 16, 28, 0.85);
-    border: 1px solid rgba(76, 201, 240, 0.25);
-    backdrop-filter: blur(12px);
+.top-text-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
     padding: 6px 14px;
-    border-radius: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
 }
 
-.tool-btn {
+.time-readout {
+    font-family: monospace;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: #cbd5e1;
+}
+
+.icon-btn {
     background: transparent;
     border: none;
-    outline: none;
-    color: #64748b;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+    color: #ffffff;
     cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.tool-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
-.tool-btn span {
-    font-size: 0.65rem;
-    font-weight: 500;
-}
-
-.tool-btn:hover {
-    color: #cbd5e1;
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.tool-btn.active {
-    color: #4cc9f0;
-    text-shadow: 0 0 6px rgba(76, 201, 240, 0.5);
-}
-
-.divider {
-    width: 1px;
+    width: 24px;
     height: 24px;
-    background: rgba(255, 255, 255, 0.15);
-    margin: 0 4px;
 }
 
-/* Floating Popup Menus (Time & Cloud Settings) */
-.cloud-panel, .time-panel {
+.icon-btn svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Cloud Settings Panel */
+.popup-panel {
     position: absolute;
-    bottom: 85px;
+    bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 11;
-    background: rgba(12, 19, 32, 0.92);
-    border: 1px solid rgba(76, 201, 240, 0.3);
+    background: rgba(10, 16, 30, 0.9);
+    border: 1px solid rgba(138, 180, 248, 0.3);
     backdrop-filter: blur(12px);
     padding: 16px 20px;
-    border-radius: 12px;
-    width: 300px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 14px;
+    width: 280px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s ease;
 }
 
-.cloud-panel.hidden, .time-panel.hidden {
+.popup-panel.hidden {
     opacity: 0;
     pointer-events: none;
     transform: translate(-50%, 15px);
 }
 
-.cloud-panel h3, .time-panel h3 {
-    font-size: 0.85rem;
-    color: #4cc9f0;
-    margin-bottom: 12px;
+.popup-panel h3 {
+    font-size: 0.8rem;
+    color: #8ab4f8;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -187,53 +146,62 @@ body, html {
 .control-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 4px;
+    margin-bottom: 10px;
 }
 
 .control-group label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #94a3b8;
 }
 
 input[type="range"] {
-    accent-color: #4cc9f0;
+    accent-color: #8ab4f8;
     cursor: pointer;
 }
 
-input[type="datetime-local"] {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(76, 201, 240, 0.3);
-    color: #ffffff;
-    padding: 8px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    outline: none;
-}
-
-.time-panel-buttons {
+/* Bottom Toolbar (Stellarium Style Pill) */
+.bottom-toolbar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
+    background: rgba(10, 16, 28, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 8px 20px;
+    border-radius: 35px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
-.time-panel-buttons button {
-    flex: 1;
-    padding: 8px;
+.tool-btn {
+    background: transparent;
     border: none;
-    border-radius: 6px;
-    background: #4cc9f0;
-    color: #02040a;
-    font-weight: 500;
-    font-size: 0.75rem;
+    outline: none;
+    color: #94a3b8;
     cursor: pointer;
-    transition: background 0.2s;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
 }
 
-.time-panel-buttons button:hover {
-    background: #38b6ff;
+.tool-btn svg {
+    width: 22px;
+    height: 22px;
 }
 
-.hidden {
-    display: none !important;
+.tool-btn:hover {
+    color: #ffffff;
+}
+
+.tool-btn.active {
+    color: #8ab4f8;
+    filter: drop-shadow(0 0 6px rgba(138, 180, 248, 0.6));
 }
