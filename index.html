@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cosmo Vision</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">COSMO VISION</div>
+
+        <div class="header-buttons">
+            <button id="locationBtn">📍 Location</button>
+            <button id="searchBtn">🔍</button>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="sky-container">
+
+            <div class="sky-map" id="skyMap">
+
+                <div class="direction north">N</div>
+                <div class="direction east">E</div>
+                <div class="direction south">S</div>
+                <div class="direction west">W</div>
+
+                <div class="stars" id="stars"></div>
+
+                <div class="constellation orion">
+                    ✦
+                    <span>Orion</span>
+                </div>
+
+                <div class="planet venus" id="venus">
+                    ●
+                    <span>Venus</span>
+                </div>
+
+                <div class="moon" id="moon">
+                    🌙
+                    <span>Moon</span>
+                </div>
+
+                <!-- CLOUD LAYER -->
+                <div class="cloud-layer" id="cloudLayer">
+
+                    <div class="cloud cloud-1"></div>
+                    <div class="cloud cloud-2"></div>
+                    <div class="cloud cloud-3"></div>
+                    <div class="cloud cloud-4"></div>
+
+                </div>
+
+                <div class="zenith">
+                    ZENITH
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="dashboard">
+
+            <div class="glass-card clarity-card">
+                <h2>Sky Clarity</h2>
+
+                <div class="score">
+                    <span id="clarityScore">8.4</span>
+                    <small>/10</small>
+                </div>
+
+                <p id="conditionText">
+                    Good conditions for stargazing
+                </p>
+            </div>
+
+            <div class="glass-card weather-card">
+
+                <h2>Cloud Conditions</h2>
+
+                <div class="weather-grid">
+
+                    <div>
+                        <span>Total Clouds</span>
+                        <strong id="totalCloud">21%</strong>
+                    </div>
+
+                    <div>
+                        <span>Low Clouds</span>
+                        <strong id="lowCloud">12%</strong>
+                    </div>
+
+                    <div>
+                        <span>Mid Clouds</span>
+                        <strong id="midCloud">25%</strong>
+                    </div>
+
+                    <div>
+                        <span>High Clouds</span>
+                        <strong id="highCloud">18%</strong>
+                    </div>
+
+                    <div>
+                        <span>Wind</span>
+                        <strong id="wind">11 km/h</strong>
+                    </div>
+
+                    <div>
+                        <span>Direction</span>
+                        <strong id="windDirection">NW</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+
+        <button id="cloudToggle">
+            ☁️ Clouds
+        </button>
+
+        <button id="constellationToggle">
+            ✨ Constellations
+        </button>
+
+        <button id="resetBtn">
+            ⟳ Reset
+        </button>
+
+    </footer>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
