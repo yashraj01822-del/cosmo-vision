@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Cosmo Vision - Interactive cloud-aware astronomy sky map">
 
     <title>Cosmo Vision</title>
 
@@ -11,52 +17,202 @@
 
 <body>
 
-    <header>
-        <div class="logo">COSMO VISION</div>
+<header>
 
-        <div class="header-buttons">
-            <button id="locationBtn">📍 Location</button>
-            <button id="searchBtn">🔍</button>
+    <div class="brand">
+
+        <img
+            src="logo.jpg.jpeg"
+            alt="Cosmo Vision"
+        >
+
+        <div>
+            <h1>Cosmo Vision</h1>
+            <span>Cloud-Aware Sky Explorer</span>
         </div>
-    </header>
 
-    <main>
+    </div>
 
-        <section class="sky-container">
+    <div class="header-actions">
 
-            <div class="sky-map" id="skyMap">
+        <button id="locationBtn">
+            📍 Location
+        </button>
 
-                <div class="direction north">N</div>
-                <div class="direction east">E</div>
-                <div class="direction south">S</div>
-                <div class="direction west">W</div>
+        <button id="searchBtn">
+            🔍 Search
+        </button>
 
-                <div class="stars" id="stars"></div>
+    </div>
 
-                <div class="constellation orion">
-                    ✦
-                    <span>Orion</span>
+</header>
+
+
+<main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div>
+            <p class="eyebrow">ASTRONOMY • WEATHER • EXPLORATION</p>
+
+            <h2>
+                See what's hiding<br>
+                <span>behind the clouds.</span>
+            </h2>
+
+            <p class="hero-description">
+                Cosmo Vision combines the night sky with cloud
+                coverage to show you where the stars and planets
+                are visible.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- SKY MAP -->
+
+    <section class="sky-section">
+
+        <div class="sky-header">
+
+            <div>
+                <h2>Live Sky Map</h2>
+                <p>Drag the sky to explore</p>
+            </div>
+
+            <div class="sky-status">
+                <span class="status-dot"></span>
+                SKY VIEW
+            </div>
+
+        </div>
+
+
+        <div class="sky-wrapper">
+
+            <div
+                id="skyMap"
+                class="sky-map"
+            >
+
+                <!-- STARS -->
+
+                <div
+                    id="stars"
+                    class="stars">
                 </div>
 
-                <div class="planet venus" id="venus">
-                    ●
-                    <span>Venus</span>
-                </div>
 
-                <div class="moon" id="moon">
-                    🌙
-                    <span>Moon</span>
-                </div>
+                <!-- MILKY WAY -->
+
+                <div class="milky-way"></div>
+
 
                 <!-- CLOUD LAYER -->
-                <div class="cloud-layer" id="cloudLayer">
 
-                    <div class="cloud cloud-1"></div>
-                    <div class="cloud cloud-2"></div>
-                    <div class="cloud cloud-3"></div>
-                    <div class="cloud cloud-4"></div>
+                <div
+                    id="cloudLayer"
+                    class="cloud-layer">
+
+                    <!-- LEFT CLOUD -->
+
+                    <div class="cloud cloud-left">
+
+                        <div class="cloud-hole hole-1"></div>
+                        <div class="cloud-hole hole-2"></div>
+                        <div class="cloud-hole hole-3"></div>
+
+                    </div>
+
+
+                    <!-- RIGHT CLOUD -->
+
+                    <div class="cloud cloud-right">
+
+                        <div class="cloud-hole hole-4"></div>
+                        <div class="cloud-hole hole-5"></div>
+
+                    </div>
+
+
+                    <!-- BOTTOM CLOUD -->
+
+                    <div class="cloud cloud-bottom">
+
+                        <div class="cloud-hole hole-6"></div>
+                        <div class="cloud-hole hole-7"></div>
+
+                    </div>
 
                 </div>
+
+
+                <!-- DIRECTIONS -->
+
+                <div class="direction north">
+                    N
+                </div>
+
+                <div class="direction east">
+                    E
+                </div>
+
+                <div class="direction south">
+                    S
+                </div>
+
+                <div class="direction west">
+                    W
+                </div>
+
+
+                <!-- CONSTELLATION -->
+
+                <div
+                    id="constellation"
+                    class="constellation">
+
+                    <div class="constellation-lines"></div>
+
+                    <div class="constellation-stars">
+                        ✦
+                    </div>
+
+                    <span>ORION</span>
+
+                </div>
+
+
+                <!-- VENUS -->
+
+                <div
+                    id="venus"
+                    class="planet venus">
+
+                    <div class="planet-body venus-body"></div>
+
+                    <span>Venus</span>
+
+                </div>
+
+
+                <!-- MOON -->
+
+                <div
+                    id="moon"
+                    class="moon">
+
+                    <div class="moon-body"></div>
+
+                    <span>Moon</span>
+
+                </div>
+
+
+                <!-- CENTER -->
 
                 <div class="zenith">
                     ZENITH
@@ -64,71 +220,17 @@
 
             </div>
 
-        </section>
+        </div>
 
-        <section class="dashboard">
+    </section>
 
-            <div class="glass-card clarity-card">
-                <h2>Sky Clarity</h2>
 
-                <div class="score">
-                    <span id="clarityScore">8.4</span>
-                    <small>/10</small>
-                </div>
+    <!-- CONTROLS -->
 
-                <p id="conditionText">
-                    Good conditions for stargazing
-                </p>
-            </div>
-
-            <div class="glass-card weather-card">
-
-                <h2>Cloud Conditions</h2>
-
-                <div class="weather-grid">
-
-                    <div>
-                        <span>Total Clouds</span>
-                        <strong id="totalCloud">21%</strong>
-                    </div>
-
-                    <div>
-                        <span>Low Clouds</span>
-                        <strong id="lowCloud">12%</strong>
-                    </div>
-
-                    <div>
-                        <span>Mid Clouds</span>
-                        <strong id="midCloud">25%</strong>
-                    </div>
-
-                    <div>
-                        <span>High Clouds</span>
-                        <strong id="highCloud">18%</strong>
-                    </div>
-
-                    <div>
-                        <span>Wind</span>
-                        <strong id="wind">11 km/h</strong>
-                    </div>
-
-                    <div>
-                        <span>Direction</span>
-                        <strong id="windDirection">NW</strong>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-    <footer>
+    <section class="controls">
 
         <button id="cloudToggle">
-            ☁️ Clouds
+            ☁️ Clouds ON
         </button>
 
         <button id="constellationToggle">
@@ -136,12 +238,188 @@
         </button>
 
         <button id="resetBtn">
-            ⟳ Reset
+            🔄 Reset Sky
         </button>
 
-    </footer>
+    </section>
 
-    <script src="app.js"></script>
+
+    <!-- DASHBOARD -->
+
+    <section class="dashboard">
+
+
+        <!-- CLARITY -->
+
+        <div class="card clarity-card">
+
+            <div class="card-title">
+
+                <span>SKY CLARITY</span>
+
+                <span>LIVE</span>
+
+            </div>
+
+            <div class="clarity-score">
+
+                <strong id="clarityScore">
+                    7.9
+                </strong>
+
+                <small>/10</small>
+
+            </div>
+
+            <p id="conditionText">
+                Good conditions for stargazing
+            </p>
+
+            <div class="clarity-bar">
+
+                <div id="clarityBar"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CLOUD DATA -->
+
+        <div class="card">
+
+            <div class="card-title">
+                <span>CLOUD COVERAGE</span>
+                <span>NOW</span>
+            </div>
+
+
+            <div class="weather-grid">
+
+                <div class="weather-item">
+
+                    <span>Total</span>
+
+                    <strong id="totalCloud">
+                        21%
+                    </strong>
+
+                </div>
+
+
+                <div class="weather-item">
+
+                    <span>Low Clouds</span>
+
+                    <strong id="lowCloud">
+                        12%
+                    </strong>
+
+                </div>
+
+
+                <div class="weather-item">
+
+                    <span>Mid Clouds</span>
+
+                    <strong id="midCloud">
+                        25%
+                    </strong>
+
+                </div>
+
+
+                <div class="weather-item">
+
+                    <span>High Clouds</span>
+
+                    <strong id="highCloud">
+                        18%
+                    </strong>
+
+                </div>
+
+
+                <div class="weather-item">
+
+                    <span>Wind</span>
+
+                    <strong id="wind">
+                        11 km/h
+                    </strong>
+
+                </div>
+
+
+                <div class="weather-item">
+
+                    <span>Direction</span>
+
+                    <strong id="windDirection">
+                        NW
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CLOUD LEGEND -->
+
+    <section class="card legend-card">
+
+        <h3>
+            Cloud Layer Guide
+        </h3>
+
+        <div class="legend">
+
+            <div>
+                <span class="legend-dot low"></span>
+                Low Clouds
+            </div>
+
+            <div>
+                <span class="legend-dot mid"></span>
+                Mid Clouds
+            </div>
+
+            <div>
+                <span class="legend-dot high"></span>
+                High Clouds
+            </div>
+
+            <div>
+                <span class="legend-dot clear"></span>
+                Clear Sky
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <div>
+        🔭 <strong>Cosmo Vision</strong>
+    </div>
+
+    <div>
+        Interactive Astronomy & Cloud Mapping
+    </div>
+
+</footer>
+
+
+<script src="app.js"></script>
 
 </body>
+
 </html>
