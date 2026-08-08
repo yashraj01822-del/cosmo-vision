@@ -1,629 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Cosmo Vision — What Clouds Hide, We Show</title>
 
     <meta
-        name="description"
-        content="Cosmo Vision is a cloud-aware interactive astronomy sky map."
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <link rel="stylesheet" href="style.css">
+    <meta
+        name="theme-color"
+        content="#020713"
+    >
+
+    <title>Cosmo Vision</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+    <!-- =========================
+         HEADER
+         ========================= -->
 
-<header class="topbar">
+    <header class="topbar">
 
-    <div class="brand">
+        <div class="brand">
 
-        <img src="logo.jpg.jpeg" alt="Cosmo Vision">
+            <div class="brand-icon">
+                ✦
+            </div>
 
-        <div>
-            <h1>COSMO VISION</h1>
-            <p>WHAT CLOUDS HIDE, WE SHOW.</p>
+            <div>
+                <h1>COSMO VISION</h1>
+                <p>What clouds hide, we show.</p>
+            </div>
+
         </div>
 
-    </div>
 
-    <div class="top-actions">
+        <div class="header-actions">
 
-        <button id="locationBtn">
-            📍 Location
-        </button>
+            <button class="header-btn">
+                📍 Location
+            </button>
 
-        <button id="searchBtn">
-            🔍 Search
-        </button>
+            <button class="header-btn">
+                🔎 Search
+            </button>
 
-    </div>
+        </div>
 
-</header>
-
-
-<!-- ================= HERO ================= -->
-
-<section class="hero">
-
-    <div class="hero-content">
-
-        <p class="eyebrow">
-            CLOUD-AWARE ASTRONOMY
-        </p>
-
-        <h2>
-            WHAT CLOUDS HIDE,<br>
-            <span>WE SHOW.</span>
-        </h2>
-
-        <p>
-            Explore the night sky and see exactly where
-            clouds may hide stars, planets and constellations.
-        </p>
-
-        <button
-            class="explore-btn"
-            id="exploreBtn">
-
-            🌌 Explore Sky
-
-        </button>
-
-    </div>
-
-</section>
+    </header>
 
 
-<!-- ================= SKY MAP ================= -->
+    <!-- =========================
+         MAIN
+         ========================= -->
 
-<section
-    class="sky-panel"
-    id="skyPanel">
+    <main>
 
-    <div class="panel-header">
+        <section class="hero">
 
-        <div>
+            <h2>Explore the Night Sky</h2>
 
-            <p class="small-label">
-                LIVE SKY
+            <p>
+                Discover stars, planets and deep-sky objects
+                through a live sky map.
             </p>
 
-            <h2>
-                Interactive Sky Map
-            </h2>
+        </section>
 
-        </div>
 
-        <div class="map-actions">
+        <!-- =========================
+             SKY MAP
+             ========================= -->
 
-            <button id="cloudBtn">
-                ☁ Clouds
-            </button>
+        <section class="sky-section">
 
-            <button id="labelsBtn">
-                ⭐ Labels
-            </button>
+            <div
+                class="sky-map-wrapper"
+                id="skyMapWrapper"
+            >
 
-            <button id="maximizeBtn">
-                ⛶
-            </button>
+                <!-- SKY CANVAS -->
 
-        </div>
+                <canvas
+                    id="skyMap"
+                ></canvas>
 
-    </div>
 
+                <!-- COMPASS -->
 
-    <!-- SKY -->
+                <div class="compass north">
+                    N
+                </div>
 
-    <div
-        class="sky-map"
-        id="skyMap">
+                <div class="compass east">
+                    E
+                </div>
 
-        <!-- STARS -->
+                <div class="compass south">
+                    S
+                </div>
 
-        <div
-            class="stars"
-            id="stars">
-        </div>
+                <div class="compass west">
+                    W
+                </div>
 
 
-        <!-- MILKY WAY -->
+                <!-- MAXIMIZE BUTTON -->
 
-        <div class="milky-way"></div>
+                <button
+                    class="maximize-btn"
+                    id="maximizeBtn"
+                    title="Maximize Sky View"
+                >
+                    ⛶
+                </button>
 
 
-        <!-- CLOUDS -->
+                <!-- OBJECT INFORMATION -->
 
-        <div
-            class="cloud-layer"
-            id="cloudLayer">
+                <div class="sky-info">
 
-            <div class="cloud cloud-west">
-
-                <div class="cloud-hole"></div>
-                <div class="cloud-hole hole2"></div>
-
-            </div>
-
-
-            <div class="cloud cloud-east">
-
-                <div class="cloud-hole"></div>
-                <div class="cloud-hole hole2"></div>
-
-            </div>
-
-
-            <div class="cloud cloud-south">
-
-                <div class="cloud-hole"></div>
-
-            </div>
-
-        </div>
-
-
-        <!-- COMPASS -->
-
-        <div class="compass north">
-            N
-        </div>
-
-        <div class="compass east">
-            E
-        </div>
-
-        <div class="compass south">
-            S
-        </div>
-
-        <div class="compass west">
-            W
-        </div>
-
-
-        <!-- MOON -->
-
-        <div
-            class="celestial moon"
-            id="moon">
-
-            <div class="moon-body"></div>
-
-            <span>Moon</span>
-
-        </div>
-
-
-        <!-- JUPITER -->
-
-        <div
-            class="celestial jupiter"
-            id="jupiter">
-
-            <div class="jupiter-body"></div>
-
-            <span>Jupiter</span>
-
-        </div>
-
-
-        <!-- VENUS -->
-
-        <div
-            class="celestial venus"
-            id="venus">
-
-            <div class="venus-body"></div>
-
-            <span>Venus</span>
-
-        </div>
-
-
-        <!-- ORION -->
-
-        <div
-            class="constellation"
-            id="orion">
-
-            <div class="orion-star o1">✦</div>
-            <div class="orion-star o2">✦</div>
-            <div class="orion-star o3">✦</div>
-            <div class="orion-star o4">✦</div>
-
-            <div class="orion-line line1"></div>
-            <div class="orion-line line2"></div>
-            <div class="orion-line line3"></div>
-
-            <span>ORION</span>
-
-        </div>
-
-
-        <!-- CENTER -->
-
-        <div class="zenith">
-            ZENITH
-        </div>
-
-    </div>
-
-
-    <!-- SKY CONTROLS -->
-
-    <div class="sky-controls">
-
-        <button id="rotateLeft">
-            ◀
-        </button>
-
-        <button id="resetSky">
-            ⟳ Reset
-        </button>
-
-        <button id="rotateRight">
-            ▶
-        </button>
-
-        <span>
-            Drag the sky • Scroll to zoom
-        </span>
-
-    </div>
-
-
-    <!-- TIMELINE -->
-
-    <div class="timeline">
-
-        <div class="timeline-top">
-
-            <strong>
-                SKY TIMELINE
-            </strong>
-
-            <span id="selectedTime">
-                22:00
-            </span>
-
-        </div>
-
-
-        <input
-            type="range"
-            id="timeSlider"
-            min="0"
-            max="12"
-            value="6"
-            step="1"
-        >
-
-
-        <div class="time-labels">
-
-            <span>18:00</span>
-            <span>20:00</span>
-            <span>22:00</span>
-            <span>00:00</span>
-            <span>02:00</span>
-            <span>04:00</span>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= SCROLLING CONTENT ================= -->
-
-<main class="content">
-
-
-    <!-- CLARITY -->
-
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-
-            <p>TONIGHT</p>
-
-            <h2>
-                How clear is the sky?
-            </h2>
-
-        </div>
-
-
-        <div class="dashboard-grid">
-
-            <div class="card clarity-card">
-
-                <span class="card-label">
-                    SKY CLARITY
-                </span>
-
-                <div class="big-score">
-
-                    <strong id="clarity">
-                        7.9
+                    <strong>
+                        COSMO VISION
                     </strong>
 
-                    <span>/10</span>
-
-                </div>
-
-                <p id="clarityText">
-                    Good conditions for stargazing.
-                </p>
-
-                <div class="progress">
-
-                    <div
-                        id="clarityBar">
-                    </div>
+                    <span>
+                        Drag to explore • Scroll to zoom
+                    </span>
 
                 </div>
 
             </div>
 
 
-            <div class="card">
+            <!-- =========================
+                 SKY CONTROLS
+                 ========================= -->
 
-                <span class="card-label">
-                    VISIBILITY
+            <div class="sky-controls">
+
+                <button
+                    class="control-btn"
+                    id="previousBtn"
+                >
+                    ◀
+                </button>
+
+
+                <button
+                    class="control-btn reset"
+                    id="resetBtn"
+                >
+                    ↻ Reset
+                </button>
+
+
+                <button
+                    class="control-btn"
+                    id="nextBtn"
+                >
+                    ▶
+                </button>
+
+
+                <span class="control-help">
+                    Drag the sky • Scroll to zoom
                 </span>
 
-                <div class="visibility-list">
+            </div>
 
-                    <div>
-                        ⭐ Stars
-                        <strong>High</strong>
-                    </div>
 
-                    <div>
-                        🌌 Milky Way
-                        <strong>Good</strong>
-                    </div>
+            <!-- =========================
+                 TIMELINE
+                 ========================= -->
 
-                    <div>
-                        🪐 Planets
-                        <strong>Excellent</strong>
-                    </div>
+            <div class="timeline">
 
-                    <div>
-                        ☁ Haze
-                        <strong>Low</strong>
-                    </div>
+                <div class="timeline-header">
+
+                    <strong>
+                        SKY TIMELINE
+                    </strong>
+
+                    <span id="timeDisplay">
+                        22:00
+                    </span>
+
+                </div>
+
+
+                <input
+                    type="range"
+                    id="timeSlider"
+                    min="18"
+                    max="28"
+                    value="22"
+                    step="0.1"
+                >
+
+
+                <div class="timeline-labels">
+
+                    <span>18:00</span>
+                    <span>20:00</span>
+                    <span>22:00</span>
+                    <span>00:00</span>
+                    <span>02:00</span>
+                    <span>04:00</span>
 
                 </div>
 
             </div>
 
-        </div>
-
-    </section>
+        </section>
 
 
-    <!-- CLOUD ANALYSIS -->
+        <!-- =========================
+             OBJECT SEARCH
+             ========================= -->
 
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-
-            <p>CLOUD ANALYSIS</p>
+        <section class="object-panel">
 
             <h2>
-                What's hiding the sky?
+                🔭 Celestial Objects
             </h2>
 
-        </div>
+            <div class="search-box">
 
+                <input
+                    type="text"
+                    id="objectSearch"
+                    placeholder="Search stars, planets, nebulae..."
+                >
 
-        <div class="cloud-grid">
-
-            <div class="cloud-card">
-
-                <span>LOW CLOUDS</span>
-
-                <strong id="lowCloud">
-                    12%
-                </strong>
-
-                <div class="mini-bar">
-                    <i style="width:12%"></i>
-                </div>
-
-                <small>
-                    Thick / obstructive
-                </small>
+                <button id="searchBtn">
+                    Search
+                </button>
 
             </div>
 
 
-            <div class="cloud-card">
+            <div
+                id="searchResults"
+                class="search-results"
+            >
 
-                <span>MID CLOUDS</span>
-
-                <strong id="midCloud">
-                    25%
-                </strong>
-
-                <div class="mini-bar">
-                    <i style="width:25%"></i>
+                <div class="object-card">
+                    <strong>Orion Nebula</strong>
+                    <span>M42 • Nebula</span>
                 </div>
 
-                <small>
-                    Moderate obstruction
-                </small>
+                <div class="object-card">
+                    <strong>Andromeda Galaxy</strong>
+                    <span>M31 • Galaxy</span>
+                </div>
+
+                <div class="object-card">
+                    <strong>Jupiter</strong>
+                    <span>Planet</span>
+                </div>
 
             </div>
 
+        </section>
 
-            <div class="cloud-card">
-
-                <span>HIGH CLOUDS</span>
-
-                <strong id="highCloud">
-                    18%
-                </strong>
-
-                <div class="mini-bar">
-                    <i style="width:18%"></i>
-                </div>
-
-                <small>
-                    Thin / hazy
-                </small>
-
-            </div>
-
-        </div>
-
-    </section>
+    </main>
 
 
-    <!-- OBJECTS -->
+    <!-- =========================
+         FOOTER
+         ========================= -->
 
-    <section class="dashboard-section">
+    <footer>
 
-        <div class="section-heading">
+        <strong>
+            COSMO VISION
+        </strong>
 
-            <p>TONIGHT'S SKY</p>
+        <span>
+            What clouds hide, we show.
+        </span>
 
-            <h2>
-                What can you see?
-            </h2>
-
-        </div>
-
-
-        <div class="objects">
-
-            <button
-                class="object"
-                data-object="moon">
-
-                <span class="object-icon">
-                    🌙
-                </span>
-
-                <span>
-                    Moon
-                    <small>Visible</small>
-                </span>
-
-            </button>
+    </footer>
 
 
-            <button
-                class="object"
-                data-object="jupiter">
+    <!-- =========================
+         JAVASCRIPT
+         ========================= -->
 
-                <span class="object-icon">
-                    🪐
-                </span>
-
-                <span>
-                    Jupiter
-                    <small>Visible</small>
-                </span>
-
-            </button>
-
-
-            <button
-                class="object"
-                data-object="venus">
-
-                <span class="object-icon">
-                    ✦
-                </span>
-
-                <span>
-                    Venus
-                    <small>Visible</small>
-                </span>
-
-            </button>
-
-
-            <button
-                class="object"
-                data-object="orion">
-
-                <span class="object-icon">
-                    ✨
-                </span>
-
-                <span>
-                    Orion
-                    <small>Partially cloudy</small>
-                </span>
-
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- INFORMATION -->
-
-    <section class="info-section">
-
-        <div>
-
-            <p class="eyebrow">
-                COSMO VISION
-            </p>
-
-            <h2>
-                Don't just look at the sky.
-                <br>
-                Understand it.
-            </h2>
-
-        </div>
-
-        <p>
-            Cosmo Vision is designed to combine astronomy
-            and atmospheric conditions into one interactive
-            experience — helping observers know not only
-            what is above them, but what is actually visible.
-        </p>
-
-    </section>
-
-</main>
-
-
-<!-- ================= FOOTER ================= -->
-
-<footer>
-
-    <div class="footer-brand">
-
-        🔭 COSMO VISION
-
-    </div>
-
-    <p>
-        WHAT CLOUDS HIDE, WE SHOW.
-    </p>
-
-</footer>
-
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 
 </body>
-
 </html>
