@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Cosmo Vision</title>
 
@@ -12,251 +11,137 @@
 
 <body>
 
-<!-- TOP BAR -->
-<header class="topbar">
+    <header>
+        <div class="logo">COSMO VISION</div>
 
-    <div class="brand">
-        <div class="logo">✦</div>
-
-        <div>
-            <h1>Cosmo Vision</h1>
-            <p>What clouds hide, we show.</p>
+        <div class="header-buttons">
+            <button id="locationBtn">📍 Location</button>
+            <button id="searchBtn">🔍</button>
         </div>
-    </div>
+    </header>
 
-    <div class="top-actions">
-        <button id="locationBtn" title="Location">📍</button>
-        <button id="settingsBtn" title="Settings">⚙️</button>
-    </div>
+    <main>
 
-</header>
+        <section class="sky-container">
 
+            <div class="sky-map" id="skyMap">
 
-<!-- SEARCH -->
-<div class="search-box">
+                <div class="direction north">N</div>
+                <div class="direction east">E</div>
+                <div class="direction south">S</div>
+                <div class="direction west">W</div>
 
-    <span>🔍</span>
+                <div class="stars" id="stars"></div>
 
-    <input
-        id="searchInput"
-        type="text"
-        placeholder="Search stars, planets, nebulae..."
-    >
+                <div class="constellation orion">
+                    ✦
+                    <span>Orion</span>
+                </div>
 
-    <button id="searchBtn">Search</button>
+                <div class="planet venus" id="venus">
+                    ●
+                    <span>Venus</span>
+                </div>
 
-</div>
+                <div class="moon" id="moon">
+                    🌙
+                    <span>Moon</span>
+                </div>
 
+                <!-- CLOUD LAYER -->
+                <div class="cloud-layer" id="cloudLayer">
 
-<!-- OBJECT SEARCH RESULTS -->
-<div id="searchResults" class="search-results"></div>
+                    <div class="cloud cloud-1"></div>
+                    <div class="cloud cloud-2"></div>
+                    <div class="cloud cloud-3"></div>
+                    <div class="cloud cloud-4"></div>
 
+                </div>
 
-<!-- MAIN SKY -->
-<main>
+                <div class="zenith">
+                    ZENITH
+                </div>
 
-    <section class="sky-container">
-
-        <canvas id="skyCanvas"></canvas>
-
-        <div class="direction north">N</div>
-        <div class="direction east">E</div>
-        <div class="direction south">S</div>
-        <div class="direction west">W</div>
-
-
-        <!-- SKY INFORMATION -->
-        <div class="sky-info">
-
-            <div class="score">
-                <span>Sky Clarity</span>
-                <strong id="clarity">8.7</strong>
-                <small>/10</small>
             </div>
 
-            <div class="weather">
-                <span>☁ Cloud Cover</span>
-                <strong id="cloudPercent">24%</strong>
+        </section>
+
+        <section class="dashboard">
+
+            <div class="glass-card clarity-card">
+                <h2>Sky Clarity</h2>
+
+                <div class="score">
+                    <span id="clarityScore">8.4</span>
+                    <small>/10</small>
+                </div>
+
+                <p id="conditionText">
+                    Good conditions for stargazing
+                </p>
             </div>
 
-        </div>
+            <div class="glass-card weather-card">
 
+                <h2>Cloud Conditions</h2>
 
-        <!-- OBJECT INFO -->
-        <div id="objectInfo" class="object-info hidden">
+                <div class="weather-grid">
 
-            <button id="closeObject">×</button>
+                    <div>
+                        <span>Total Clouds</span>
+                        <strong id="totalCloud">21%</strong>
+                    </div>
 
-            <span id="objectType">STAR</span>
+                    <div>
+                        <span>Low Clouds</span>
+                        <strong id="lowCloud">12%</strong>
+                    </div>
 
-            <h2 id="objectName">Sirius</h2>
+                    <div>
+                        <span>Mid Clouds</span>
+                        <strong id="midCloud">25%</strong>
+                    </div>
 
-            <p id="objectDescription">
-                The brightest star in Earth's night sky.
-            </p>
+                    <div>
+                        <span>High Clouds</span>
+                        <strong id="highCloud">18%</strong>
+                    </div>
 
-            <div class="object-data">
-                <span>RA <b id="objectRA">06h 45m</b></span>
-                <span>DEC <b id="objectDEC">−16° 43′</b></span>
+                    <div>
+                        <span>Wind</span>
+                        <strong id="wind">11 km/h</strong>
+                    </div>
+
+                    <div>
+                        <span>Direction</span>
+                        <strong id="windDirection">NW</strong>
+                    </div>
+
+                </div>
+
             </div>
 
-        </div>
+        </section>
 
-    </section>
+    </main>
 
+    <footer>
 
-    <!-- CONTROLS -->
-    <section class="controls">
-
-        <button id="arBtn">
-            📷
-            <span>AR Sky</span>
+        <button id="cloudToggle">
+            ☁️ Clouds
         </button>
 
-        <button id="cloudBtn">
-            ☁️
-            <span>Clouds</span>
+        <button id="constellationToggle">
+            ✨ Constellations
         </button>
 
-        <button id="telescopeBtn">
-            🔭
-            <span>Telescope</span>
+        <button id="resetBtn">
+            ⟳ Reset
         </button>
 
-        <button id="objectsBtn">
-            ⭐
-            <span>Objects</span>
-        </button>
+    </footer>
 
-    </section>
-
-
-    <!-- TIMELINE -->
-    <section class="timeline">
-
-        <div class="timeline-header">
-
-            <span>Sky Time</span>
-
-            <strong id="timeDisplay">
-                Tonight 20:00
-            </strong>
-
-        </div>
-
-        <input
-            id="timeSlider"
-            type="range"
-            min="-12"
-            max="12"
-            value="0"
-        >
-
-        <div class="timeline-labels">
-            <span>Now</span>
-            <span>+6h</span>
-            <span>+12h</span>
-        </div>
-
-    </section>
-
-</main>
-
-
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-
-    <button class="active">
-        🌌
-        <span>Sky</span>
-    </button>
-
-    <button id="discoverBtn">
-        ✨
-        <span>Discover</span>
-    </button>
-
-    <button id="arNavBtn">
-        📷
-        <span>AR</span>
-    </button>
-
-    <button id="settingsNavBtn">
-        ⚙️
-        <span>Settings</span>
-    </button>
-
-</nav>
-
-
-<!-- SETTINGS PANEL -->
-<div id="settingsPanel" class="panel">
-
-    <div class="panel-header">
-
-        <h2>Settings</h2>
-
-        <button id="closeSettings">×</button>
-
-    </div>
-
-
-    <label>
-        <span>☁ Cloud Overlay</span>
-        <input type="checkbox" id="cloudToggle" checked>
-    </label>
-
-
-    <label>
-        <span>⭐ Star Labels</span>
-        <input type="checkbox" id="starToggle" checked>
-    </label>
-
-
-    <label>
-        <span>🌙 Night Vision</span>
-        <input type="checkbox" id="nightToggle" checked>
-    </label>
-
-
-    <label>
-        <span>🧭 Device Orientation</span>
-        <input type="checkbox" id="orientationToggle">
-    </label>
-
-
-    <button class="setting-button" id="cameraPermission">
-        📷 Enable Camera
-    </button>
-
-
-    <button class="setting-button" id="locationPermission">
-        📍 Use My Location
-    </button>
-
-</div>
-
-
-<!-- AR CAMERA -->
-<div id="cameraScreen" class="camera-screen">
-
-    <video id="camera" autoplay playsinline></video>
-
-    <canvas id="arCanvas"></canvas>
-
-    <div class="ar-title">
-        <b>Cosmo Vision AR</b>
-        <span>Point your phone at the sky</span>
-    </div>
-
-    <button id="closeCamera" class="close-camera">
-        ×
-    </button>
-
-</div>
-
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 
 </body>
 </html>
