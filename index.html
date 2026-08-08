@@ -1,186 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-  <title>Cosmo Vision</title>
-
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cosmo Vision — What clouds hide, we show.</title>
+    <meta name="description" content="A premium responsive astronomy web application providing interactive sky mapping, real-time cloud overlays, motion tracking, and celestial object exploration.">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <div id="app" class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="brand">
+                <img src="assets/logo.jpg" alt="Cosmo Vision Logo" class="logo" onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <h1 class="app-title">COSMO VISION</h1>
+                    <span class="tagline">What clouds hide, we show.</span>
+                </div>
+            </div>
+            
+            <nav class="nav-controls">
+                <button id="btn-location" class="btn" title="Use Current Location (Press L)" aria-label="Use Current Location">
+                    <span class="btn-icon">📍</span> <span class="btn-text">Location</span>
+                </button>
+                <button id="btn-search-toggle" class="btn" title="Search Objects (Press S)" aria-label="Search Objects">
+                    <span class="btn-icon">🔎</span> <span class="btn-text">Search</span>
+                </button>
+                <button id="btn-motion" class="btn" title="Toggle Phone Motion/AR (Press M)" aria-label="Toggle Phone Motion Controls">
+                    <span class="btn-icon">📱</span> <span class="btn-text">Motion</span>
+                </button>
+                <button id="btn-camera" class="btn" title="Toggle AR Camera Mode (Press C)" aria-label="Toggle AR Camera Mode">
+                    <span class="btn-icon">📷</span> <span class="btn-text">Camera</span>
+                </button>
+                <button id="btn-maximize" class="btn btn-primary" title="Maximize View (Press F)" aria-label="Maximize Sky View">
+                    <span class="btn-icon">⛶</span> <span class="btn-text">Maximize</span>
+                </button>
+            </nav>
+        </header>
 
-  <main id="app">
+        <!-- Main Sky View Canvas Container -->
+        <main id="sky-container" class="sky-container">
+            <video id="camera-feed" class="camera-feed hidden" autoplay playsinline muted></video>
+            <canvas id="sky-canvas"></canvas>
 
-    <!-- SKY -->
-    <canvas id="sky"></canvas>
+            <!-- Cardinal Orientation Indicators Overlay -->
+            <div class="cardinal-overlay">
+                <span class="cardinal N">N</span>
+                <span class="cardinal E">E</span>
+                <span class="cardinal S">S</span>
+                <span class="cardinal W">W</span>
+            </div>
 
-    <!-- CAMERA -->
-    <video id="camera" autoplay playsinline></video>
+            <!-- On-Screen Exit Fullscreen Control (Visible in Fullscreen) -->
+            <button id="btn-exit-fullscreen" class="btn glass-btn hidden" aria-label="Exit Fullscreen Mode">
+                ✕ Exit Fullscreen
+            </button>
 
-    <!-- TOP BAR -->
-    <header class="topbar">
+            <!-- Search Panel Drawer -->
+            <section id="search-panel" class="glass-panel search-panel hidden" aria-label="Search Panel">
+                <div class="panel-header">
+                    <h3>Search 1000+ Celestial Objects</h3>
+                    <button id="btn-close-search" class="btn-close" aria-label="Close Search Panel">✕</button>
+                </div>
+                <div class="search-input-group">
+                    <input type="text" id="search-input" placeholder="Search stars, planets, nebulae, galaxies, constellations..." autocomplete="off">
+                    <button id="btn-clear-search" class="btn-small">Clear</button>
+                </div>
+                <div id="search-results" class="search-results-list"></div>
+            </section>
 
-      <div class="brand">
-        <div class="logo">✦</div>
+            <!-- Selected Object Details Panel -->
+            <section id="object-panel" class="glass-panel object-panel hidden" aria-label="Object Details Panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 id="obj-name">Orion Nebula</h2>
+                        <span id="obj-id" class="subtitle">M42</span>
+                    </div>
+                    <button id="btn-close-object" class="btn-close" aria-label="Close Info Panel">✕</button>
+                </div>
+                <div class="panel-body">
+                    <div class="info-grid">
+                        <div class="info-item"><span class="label">Type:</span> <span id="obj-type" class="value">Emission Nebula</span></div>
+                        <div class="info-item"><span class="label">Constellation:</span> <span id="obj-constellation" class="value">Orion</span></div>
+                        <div class="info-item"><span class="label">Magnitude:</span> <span id="obj-mag" class="value">4.0</span></div>
+                        <div class="info-item"><span class="label">Distance:</span> <span id="obj-dist" class="value">~1,340 ly</span></div>
+                        <div class="info-item"><span class="label">Coordinates:</span> <span id="obj-coords" class="value">RA 05h 35m / Dec -05°23'</span></div>
+                        <div class="info-item"><span class="label">Visibility:</span> <span id="obj-vis" class="value">Good</span></div>
+                    </div>
+                    <p id="obj-desc" class="obj-description">A massive star-forming region located south of Orion's Belt.</p>
+                </div>
+            </section>
 
-        <div>
-          <h1>Cosmo Vision</h1>
-          <p>What clouds hide, we show.</p>
-        </div>
-      </div>
+            <!-- Location Status / Coordinates Badge -->
+            <div id="location-badge" class="location-badge">
+                <span class="location-icon">🌐</span>
+                <span id="location-coords">Lat: 00.00° N, Lon: 00.00° E</span>
+            </div>
+        </main>
 
-      <div class="top-buttons">
-        <button id="searchButton">⌕</button>
-        <button id="cameraButton">◉</button>
-        <button id="settingsButton">⚙</button>
-      </div>
+        <!-- Bottom Controls & Dashboards Area -->
+        <footer class="app-footer">
+            <div class="footer-upper">
+                <!-- Navigation & Reset Buttons -->
+                <div class="view-controls">
+                    <button id="btn-pan-left" class="btn btn-icon-only" title="Pan Left (Left Arrow)" aria-label="Pan Left">◀</button>
+                    <button id="btn-reset" class="btn btn-accent" title="Reset Sky View (Press R)" aria-label="Reset View">↺ Reset View</button>
+                    <button id="btn-pan-right" class="btn btn-icon-only" title="Pan Right (Right Arrow)" aria-label="Pan Right">▶</button>
+                </div>
 
-    </header>
+                <!-- Cloud Layers Controls -->
+                <div class="cloud-legend-container glass-panel-sm">
+                    <span class="legend-title">Cloud Layers:</span>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="chk-low-clouds" checked>
+                        <span class="custom-chk low"></span> ☁ Low
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="chk-med-clouds" checked>
+                        <span class="custom-chk med"></span> ☁ Medium
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="chk-high-clouds" checked>
+                        <span class="custom-chk high"></span> ☁ High
+                    </label>
+                </div>
 
+                <!-- Sky Clarity Score Display -->
+                <div class="clarity-score-card glass-panel-sm">
+                    <span class="clarity-label">SKY CLARITY</span>
+                    <div class="score-wrapper">
+                        <span id="clarity-score-val" class="score-number">8.7</span>
+                        <span class="score-max">/ 10</span>
+                    </div>
+                    <span id="clarity-rating" class="score-rating">Excellent</span>
+                </div>
+            </div>
 
-    <!-- SEARCH -->
-    <section id="searchPanel" class="panel hidden">
+            <!-- Sky Timeline Bar -->
+            <div class="timeline-container glass-panel-sm">
+                <div class="timeline-header">
+                    <span class="timeline-title">Sky Timeline (Time Scrubbing)</span>
+                    <span id="current-time-display" class="time-display">2026-08-08 22:00 IST</span>
+                    <button id="btn-now" class="btn-small">Live Now</button>
+                </div>
+                <div class="timeline-slider-wrapper">
+                    <button id="btn-time-prev" class="btn-small" title="Previous 2 Hours">◀</button>
+                    <input type="range" id="timeline-slider" min="-12" max="12" step="0.5" value="0">
+                    <button id="btn-time-next" class="btn-small" title="Next 2 Hours">▶</button>
+                </div>
+            </div>
+        </footer>
+    </div>
 
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Search stars, planets, Messier objects..."
-        autocomplete="off">
-
-      <div id="searchResults"></div>
-
-    </section>
-
-
-    <!-- OBJECT INFO -->
-    <section id="objectInfo" class="info-card hidden">
-
-      <button id="closeInfo">×</button>
-
-      <div class="object-icon">✦</div>
-
-      <h2 id="objectName">Object</h2>
-
-      <p id="objectType">Celestial object</p>
-
-      <div class="coordinates">
-
-        <div>
-          <span>RA</span>
-          <strong id="objectRA">--</strong>
-        </div>
-
-        <div>
-          <span>DEC</span>
-          <strong id="objectDEC">--</strong>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- BOTTOM CONTROL PANEL -->
-    <section class="bottom-panel">
-
-      <div class="status-row">
-
-        <span id="orientationStatus">
-          📱 Manual mode
-        </span>
-
-        <span id="objectCount">
-          0 objects
-        </span>
-
-      </div>
-
-
-      <div class="timeline">
-
-        <button id="timeBack">−</button>
-
-        <input
-          id="timeSlider"
-          type="range"
-          min="-12"
-          max="12"
-          value="0"
-          step="1">
-
-        <button id="timeForward">+</button>
-
-      </div>
-
-
-      <div class="controls">
-
-        <button id="orientationButton">
-          📱 Motion
-        </button>
-
-        <button id="resetButton">
-          ⟳ Reset
-        </button>
-
-        <button id="cloudButton">
-          ☁ Clouds
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- SETTINGS -->
-    <aside id="settingsPanel" class="settings hidden">
-
-      <div class="settings-header">
-
-        <h2>Cosmo Vision</h2>
-
-        <button id="closeSettings">×</button>
-
-      </div>
-
-      <label>
-        <input type="checkbox" id="labelsToggle" checked>
-        Show object labels
-      </label>
-
-      <label>
-        <input type="checkbox" id="starsToggle" checked>
-        Show stars
-      </label>
-
-      <label>
-        <input type="checkbox" id="cloudToggle">
-        Cloud overlay
-      </label>
-
-      <label>
-        <input type="checkbox" id="motionToggle">
-        Phone motion
-      </label>
-
-      <div class="settings-info">
-
-        <p>Cosmo Vision</p>
-        <small>
-          What clouds hide, we show.
-        </small>
-
-      </div>
-
-    </aside>
-
-  </main>
-
-  <script src="objects.js"></script>
-  <script src="app.js"></script>
-
+    <!-- Main JavaScript Module -->
+    <script src="app.js"></script>
 </body>
 </html>
