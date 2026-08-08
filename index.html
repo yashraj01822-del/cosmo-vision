@@ -1,302 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+  <title>Cosmo Vision</title>
 
-    <meta
-        name="theme-color"
-        content="#020713"
-    >
-
-    <title>Cosmo Vision</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- =========================
-         HEADER
-         ========================= -->
+  <main id="app">
 
+    <!-- SKY -->
+    <canvas id="sky"></canvas>
+
+    <!-- CAMERA -->
+    <video id="camera" autoplay playsinline></video>
+
+    <!-- TOP BAR -->
     <header class="topbar">
 
-        <div class="brand">
+      <div class="brand">
+        <div class="logo">✦</div>
 
-            <div class="brand-icon">
-                ✦
-            </div>
-
-            <div>
-                <h1>COSMO VISION</h1>
-                <p>What clouds hide, we show.</p>
-            </div>
-
+        <div>
+          <h1>Cosmo Vision</h1>
+          <p>What clouds hide, we show.</p>
         </div>
+      </div>
 
-
-        <div class="header-actions">
-
-            <button class="header-btn">
-                📍 Location
-            </button>
-
-            <button class="header-btn">
-                🔎 Search
-            </button>
-
-        </div>
+      <div class="top-buttons">
+        <button id="searchButton">⌕</button>
+        <button id="cameraButton">◉</button>
+        <button id="settingsButton">⚙</button>
+      </div>
 
     </header>
 
 
-    <!-- =========================
-         MAIN
-         ========================= -->
+    <!-- SEARCH -->
+    <section id="searchPanel" class="panel hidden">
 
-    <main>
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search stars, planets, Messier objects..."
+        autocomplete="off">
 
-        <section class="hero">
+      <div id="searchResults"></div>
 
-            <h2>Explore the Night Sky</h2>
+    </section>
 
-            <p>
-                Discover stars, planets and deep-sky objects
-                through a live sky map.
-            </p>
 
-        </section>
+    <!-- OBJECT INFO -->
+    <section id="objectInfo" class="info-card hidden">
 
+      <button id="closeInfo">×</button>
 
-        <!-- =========================
-             SKY MAP
-             ========================= -->
+      <div class="object-icon">✦</div>
 
-        <section class="sky-section">
+      <h2 id="objectName">Object</h2>
 
-            <div
-                class="sky-map-wrapper"
-                id="skyMapWrapper"
-            >
+      <p id="objectType">Celestial object</p>
 
-                <!-- SKY CANVAS -->
+      <div class="coordinates">
 
-                <canvas
-                    id="skyMap"
-                ></canvas>
+        <div>
+          <span>RA</span>
+          <strong id="objectRA">--</strong>
+        </div>
 
+        <div>
+          <span>DEC</span>
+          <strong id="objectDEC">--</strong>
+        </div>
 
-                <!-- COMPASS -->
+      </div>
 
-                <div class="compass north">
-                    N
-                </div>
+    </section>
 
-                <div class="compass east">
-                    E
-                </div>
 
-                <div class="compass south">
-                    S
-                </div>
+    <!-- BOTTOM CONTROL PANEL -->
+    <section class="bottom-panel">
 
-                <div class="compass west">
-                    W
-                </div>
+      <div class="status-row">
 
-
-                <!-- MAXIMIZE BUTTON -->
-
-                <button
-                    class="maximize-btn"
-                    id="maximizeBtn"
-                    title="Maximize Sky View"
-                >
-                    ⛶
-                </button>
-
-
-                <!-- OBJECT INFORMATION -->
-
-                <div class="sky-info">
-
-                    <strong>
-                        COSMO VISION
-                    </strong>
-
-                    <span>
-                        Drag to explore • Scroll to zoom
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- =========================
-                 SKY CONTROLS
-                 ========================= -->
-
-            <div class="sky-controls">
-
-                <button
-                    class="control-btn"
-                    id="previousBtn"
-                >
-                    ◀
-                </button>
-
-
-                <button
-                    class="control-btn reset"
-                    id="resetBtn"
-                >
-                    ↻ Reset
-                </button>
-
-
-                <button
-                    class="control-btn"
-                    id="nextBtn"
-                >
-                    ▶
-                </button>
-
-
-                <span class="control-help">
-                    Drag the sky • Scroll to zoom
-                </span>
-
-            </div>
-
-
-            <!-- =========================
-                 TIMELINE
-                 ========================= -->
-
-            <div class="timeline">
-
-                <div class="timeline-header">
-
-                    <strong>
-                        SKY TIMELINE
-                    </strong>
-
-                    <span id="timeDisplay">
-                        22:00
-                    </span>
-
-                </div>
-
-
-                <input
-                    type="range"
-                    id="timeSlider"
-                    min="18"
-                    max="28"
-                    value="22"
-                    step="0.1"
-                >
-
-
-                <div class="timeline-labels">
-
-                    <span>18:00</span>
-                    <span>20:00</span>
-                    <span>22:00</span>
-                    <span>00:00</span>
-                    <span>02:00</span>
-                    <span>04:00</span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             OBJECT SEARCH
-             ========================= -->
-
-        <section class="object-panel">
-
-            <h2>
-                🔭 Celestial Objects
-            </h2>
-
-            <div class="search-box">
-
-                <input
-                    type="text"
-                    id="objectSearch"
-                    placeholder="Search stars, planets, nebulae..."
-                >
-
-                <button id="searchBtn">
-                    Search
-                </button>
-
-            </div>
-
-
-            <div
-                id="searchResults"
-                class="search-results"
-            >
-
-                <div class="object-card">
-                    <strong>Orion Nebula</strong>
-                    <span>M42 • Nebula</span>
-                </div>
-
-                <div class="object-card">
-                    <strong>Andromeda Galaxy</strong>
-                    <span>M31 • Galaxy</span>
-                </div>
-
-                <div class="object-card">
-                    <strong>Jupiter</strong>
-                    <span>Planet</span>
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- =========================
-         FOOTER
-         ========================= -->
-
-    <footer>
-
-        <strong>
-            COSMO VISION
-        </strong>
-
-        <span>
-            What clouds hide, we show.
+        <span id="orientationStatus">
+          📱 Manual mode
         </span>
 
-    </footer>
+        <span id="objectCount">
+          0 objects
+        </span>
+
+      </div>
 
 
-    <!-- =========================
-         JAVASCRIPT
-         ========================= -->
+      <div class="timeline">
 
-    <script src="app.js"></script>
+        <button id="timeBack">−</button>
+
+        <input
+          id="timeSlider"
+          type="range"
+          min="-12"
+          max="12"
+          value="0"
+          step="1">
+
+        <button id="timeForward">+</button>
+
+      </div>
+
+
+      <div class="controls">
+
+        <button id="orientationButton">
+          📱 Motion
+        </button>
+
+        <button id="resetButton">
+          ⟳ Reset
+        </button>
+
+        <button id="cloudButton">
+          ☁ Clouds
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- SETTINGS -->
+    <aside id="settingsPanel" class="settings hidden">
+
+      <div class="settings-header">
+
+        <h2>Cosmo Vision</h2>
+
+        <button id="closeSettings">×</button>
+
+      </div>
+
+      <label>
+        <input type="checkbox" id="labelsToggle" checked>
+        Show object labels
+      </label>
+
+      <label>
+        <input type="checkbox" id="starsToggle" checked>
+        Show stars
+      </label>
+
+      <label>
+        <input type="checkbox" id="cloudToggle">
+        Cloud overlay
+      </label>
+
+      <label>
+        <input type="checkbox" id="motionToggle">
+        Phone motion
+      </label>
+
+      <div class="settings-info">
+
+        <p>Cosmo Vision</p>
+        <small>
+          What clouds hide, we show.
+        </small>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="objects.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>
