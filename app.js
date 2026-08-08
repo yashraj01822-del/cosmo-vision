@@ -1,375 +1,1203 @@
-// ==========================================
-// COSMO VISION - MAIN APPLICATION
-// ==========================================
-
-const skyMap = document.getElementById("skyMap");
-const starsContainer = document.getElementById("stars");
-const cloudLayer = document.getElementById("cloudLayer");
+/* =====================================================
+   COSMO VISION
+   CAMERA AR SKY
+   ===================================================== */
 
 
-// ==========================================
-// GENERATE STARS
-// ==========================================
+/* =====================================================
+   EXISTING SKY
+===================================================== */
 
-function generateStars() {
+const skyMap =
+    document.getElementById("skyMap");
 
-    starsContainer.innerHTML = "";
+const stars =
+    document.getElementById("stars");
 
-    const numberOfStars = 180;
+const cloudLayer =
+    document.getElementById("cloudLayer");
 
-    for (let i = 0; i < numberOfStars; i++) {
 
-        const star = document.createElement("div");
+/* =====================================================
+   CELESTIAL OBJECTS
+===================================================== */
 
-        star.className = "star";
+let celestialObjects = [
 
-        // Keep stars inside the circular sky
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.sqrt(Math.random()) * 48;
+    {
+        name: "Sirius",
+        catalog: "HIP 32349",
+        type: "Star",
+        constellation: "Canis Major",
+        magnitude: "-1.46",
+        description:
+            "The brightest star in Earth's night sky."
+    },
 
-        const x = 50 + radius * Math.cos(angle);
-        const y = 50 + radius * Math.sin(angle);
+    {
+        name: "Jupiter",
+        catalog: "Solar System",
+        type: "Planet",
+        constellation: "Variable",
+        magnitude: "-2.90",
+        description:
+            "The largest planet in the Solar System."
+    },
 
-        star.style.left = `${x}%`;
-        star.style.top = `${y}%`;
+    {
+        name: "Orion",
+        catalog: "Constellation",
+        type: "Constellation",
+        constellation: "Orion",
+        magnitude: "—",
+        description:
+            "One of the most recognizable constellations."
+    },
 
-        const size = Math.random() * 2.5 + 1;
+    {
+        name: "Pleiades",
+        catalog: "M45",
+        type: "Open Cluster",
+        constellation: "Taurus",
+        magnitude: "1.60",
+        description:
+            "A famous open star cluster."
+    },
 
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
+    {
+        name: "Andromeda Galaxy",
+        catalog: "M31",
+        type: "Galaxy",
+        constellation: "Andromeda",
+        magnitude: "3.44",
+        description:
+            "The nearest large galaxy to the Milky Way."
+    },
 
-        star.style.opacity = Math.random() * 0.7 + 0.3;
+    {
+        name: "Orion Nebula",
+        catalog: "M42",
+        type: "Nebula",
+        constellation: "Orion",
+        magnitude: "4.00",
+        description:
+            "A bright stellar nursery."
+    },
 
-        starsContainer.appendChild(star);
+    {
+        name: "Betelgeuse",
+        catalog: "Alpha Orionis",
+        type: "Star",
+        constellation: "Orion",
+        magnitude: "0.42",
+        description:
+            "A red supergiant in Orion."
+    },
+
+    {
+        name: "Polaris",
+        catalog: "Alpha Ursae Minoris",
+        type: "Star",
+        constellation: "Ursa Minor",
+        magnitude: "1.98",
+        description:
+            "The North Star."
     }
+
+];
+
+
+const types = [
+
+    "Star",
+    "Galaxy",
+    "Nebula",
+    "Open Cluster",
+    "Globular Cluster",
+    "Planetary Nebula"
+
+];
+
+
+const constellations = [
+
+    "Orion",
+    "Taurus",
+    "Andromeda",
+    "Cassiopeia",
+    "Cygnus",
+    "Lyra",
+    "Scorpius",
+    "Sagittarius",
+    "Leo",
+    "Virgo",
+    "Ursa Major",
+    "Ursa Minor",
+    "Gemini",
+    "Canis Major",
+    "Aquila",
+    "Perseus"
+
+];
+
+
+for (
+    let i = 1;
+    i <= 1200;
+    i++
+) {
+
+    celestialObjects.push({
+
+        name:
+            `Catalogue Object ${i}`,
+
+        catalog:
+            `CV-${String(i).padStart(4,"0")}`,
+
+        type:
+            types[
+                i % types.length
+            ],
+
+        constellation:
+            constellations[
+                i % constellations.length
+            ],
+
+        magnitude:
+            (2 + (i % 90) / 10)
+                .toFixed(1),
+
+        description:
+            "Celestial catalogue object."
+
+    });
+
 }
 
-generateStars();
+
+document.getElementById(
+    "objectCount"
+).textContent =
+    celestialObjects.length + "+";
 
 
-// ==========================================
-// CLOUD TOGGLE
-// ==========================================
+/* =====================================================
+   SEARCH
+===================================================== */
 
-const cloudToggle = document.getElementById("cloudToggle");
+const searchInput =
+    document.getElementById(
+        "objectSearch"
+    );
+
+const searchResults =
+    document.getElementById(
+        "searchResults"
+    );
+
+
+searchInput.addEventListener(
+    "input",
+    function() {
+
+        const query =
+            this.value
+                .toLowerCase()
+                .trim();
+
+
+        searchResults.innerHTML = "";
+
+
+        if (!query)
+            return;
+
+
+        const matches =
+            celestialObjects
+                .filter(
+                    object =>
+                        object.name
+                            .toLowerCase()
+                            .includes(query)
+
+                        ||
+
+                        object.catalog
+                            .toLowerCase()
+                            .includes(query)
+
+                        ||
+
+                        object.type
+                            .toLowerCase()
+                            .includes(query)
+
+                        ||
+
+                        object.constellation
+                            .toLowerCase()
+                            .includes(query)
+                )
+                .slice(0,10);
+
+
+        matches.forEach(
+            object => {
+
+                const item =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                item.className =
+                    "search-result";
+
+
+                item.innerHTML = `
+
+                    <span class="result-icon">
+                        ⭐
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            ${object.name}
+                        </strong>
+
+                        <small>
+                            ${object.catalog}
+                            •
+                            ${object.type}
+                            •
+                            ${object.constellation}
+                        </small>
+
+                    </div>
+                `;
+
+
+                item.onclick =
+                    () => {
+
+                        showObject(
+                            object
+                        );
+
+                        searchResults
+                            .innerHTML =
+                            "";
+
+                        searchInput.value =
+                            object.name;
+
+                    };
+
+
+                searchResults.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+);
+
+
+function showObject(object) {
+
+    document.getElementById(
+        "infoName"
+    ).textContent =
+        object.name;
+
+
+    document.getElementById(
+        "infoDescription"
+    ).textContent =
+        object.description;
+
+
+    document.getElementById(
+        "infoType"
+    ).textContent =
+        object.type;
+
+
+    document.getElementById(
+        "infoCatalog"
+    ).textContent =
+        object.catalog;
+
+
+    document.getElementById(
+        "infoConstellation"
+    ).textContent =
+        object.constellation;
+
+
+    document.getElementById(
+        "infoMagnitude"
+    ).textContent =
+        object.magnitude;
+
+}
+
+
+/* =====================================================
+   STARS
+===================================================== */
+
+function createStars() {
+
+    stars.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < 450;
+        i++
+    ) {
+
+        const star =
+            document.createElement(
+                "div"
+            );
+
+
+        star.className =
+            "star";
+
+
+        star.style.left =
+            Math.random() * 100 +
+            "%";
+
+
+        star.style.top =
+            Math.random() * 100 +
+            "%";
+
+
+        const size =
+            Math.random() * 2.5 +
+            .5;
+
+
+        star.style.width =
+            size + "px";
+
+
+        star.style.height =
+            size + "px";
+
+
+        star.style.opacity =
+            Math.random() * .8 +
+            .2;
+
+
+        stars.appendChild(
+            star
+        );
+
+    }
+
+}
+
+
+createStars();
+
+
+/* =====================================================
+   CLOUD BUTTON
+===================================================== */
 
 let cloudsVisible = true;
 
-cloudToggle.addEventListener("click", () => {
 
-    cloudsVisible = !cloudsVisible;
+document
+    .getElementById("cloudBtn")
+    .onclick =
+    function() {
 
-    cloudLayer.style.opacity = cloudsVisible ? "1" : "0";
-
-    cloudToggle.textContent =
-        cloudsVisible ? "☁️ Clouds" : "☁️ Clouds OFF";
-});
-
-
-// ==========================================
-// CONSTELLATION TOGGLE
-// ==========================================
-
-const constellationToggle =
-    document.getElementById("constellationToggle");
-
-const constellation =
-    document.querySelector(".constellation");
-
-let constellationsVisible = true;
-
-constellationToggle.addEventListener("click", () => {
-
-    constellationsVisible = !constellationsVisible;
-
-    constellation.style.display =
-        constellationsVisible ? "block" : "none";
-
-    constellationToggle.textContent =
-        constellationsVisible
-            ? "✨ Constellations"
-            : "✨ Constellations OFF";
-});
+        cloudsVisible =
+            !cloudsVisible;
 
 
-// ==========================================
-// RESET SKY
-// ==========================================
+        cloudLayer.style.opacity =
+            cloudsVisible
+                ? "1"
+                : "0";
 
-const resetBtn = document.getElementById("resetBtn");
-
-resetBtn.addEventListener("click", () => {
-
-    skyMap.style.transform = "rotate(0deg) scale(1)";
-
-    generateStars();
-
-});
+    };
 
 
-// ==========================================
-// SKY MAP DRAGGING
-// ==========================================
+/* =====================================================
+   LABEL BUTTON
+===================================================== */
+
+let labelsVisible = true;
+
+
+document
+    .getElementById("labelsBtn")
+    .onclick =
+    function() {
+
+        labelsVisible =
+            !labelsVisible;
+
+
+        document
+            .querySelectorAll(
+                ".sky-object"
+            )
+            .forEach(
+                object => {
+
+                    object.style.opacity =
+                        labelsVisible
+                            ? "1"
+                            : "0";
+
+                }
+            );
+
+    };
+
+
+/* =====================================================
+   MAXIMIZE
+===================================================== */
+
+document
+    .getElementById("maximizeBtn")
+    .onclick =
+    function() {
+
+        document
+            .getElementById("skyPanel")
+            .classList.toggle(
+                "maximized"
+            );
+
+    };
+
+
+/* =====================================================
+   EXPLORE
+===================================================== */
+
+document
+    .getElementById("exploreBtn")
+    .onclick =
+    function() {
+
+        document
+            .getElementById("skyPanel")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    };
+
+
+/* =====================================================
+   CAMERA AR
+===================================================== */
+
+const arSection =
+    document.getElementById(
+        "arSection"
+    );
+
+const cameraVideo =
+    document.getElementById(
+        "cameraVideo"
+    );
+
+let cameraStream = null;
+
+let currentFacingMode =
+    "environment";
+
+
+/* =====================================================
+   OPEN CAMERA
+===================================================== */
+
+async function openCamera() {
+
+    arSection.classList.add(
+        "active"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    try {
+
+        cameraStream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+
+                    video: {
+
+                        facingMode:
+                            currentFacingMode
+
+                    },
+
+                    audio: false
+
+                });
+
+
+        cameraVideo.srcObject =
+            cameraStream;
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+
+        alert(
+            "Camera permission was not granted. Please allow camera access and try again."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CAMERA BUTTONS
+===================================================== */
+
+document
+    .getElementById(
+        "cameraTopBtn"
+    )
+    .onclick =
+    openCamera;
+
+
+document
+    .getElementById(
+        "cameraHeroBtn"
+    )
+    .onclick =
+    openCamera;
+
+
+/* =====================================================
+   CLOSE CAMERA
+===================================================== */
+
+document
+    .getElementById(
+        "closeAR"
+    )
+    .onclick =
+    closeCamera;
+
+
+function closeCamera() {
+
+    if (cameraStream) {
+
+        cameraStream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+        cameraStream = null;
+
+    }
+
+
+    cameraVideo.srcObject =
+        null;
+
+
+    arSection.classList.remove(
+        "active"
+    );
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =====================================================
+   SWITCH CAMERA
+===================================================== */
+
+document
+    .getElementById(
+        "switchCameraBtn"
+    )
+    .onclick =
+    async function() {
+
+        if (cameraStream) {
+
+            cameraStream
+                .getTracks()
+                .forEach(
+                    track =>
+                        track.stop()
+                );
+
+        }
+
+
+        currentFacingMode =
+            currentFacingMode ===
+            "environment"
+
+                ? "user"
+
+                : "environment";
+
+
+        await openCamera();
+
+    };
+
+
+/* =====================================================
+   AR STARS
+===================================================== */
+
+const arStars =
+    document.getElementById(
+        "arStars"
+    );
+
+
+function createARStars() {
+
+    arStars.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < 180;
+        i++
+    ) {
+
+        const star =
+            document.createElement(
+                "div"
+            );
+
+
+        star.className =
+            "ar-star-dot";
+
+
+        star.style.left =
+            Math.random() * 100 +
+            "%";
+
+
+        star.style.top =
+            Math.random() * 100 +
+            "%";
+
+
+        const size =
+            Math.random() * 3 +
+            1;
+
+
+        star.style.width =
+            size + "px";
+
+
+        star.style.height =
+            size + "px";
+
+
+        star.style.opacity =
+            Math.random() * .8 +
+            .2;
+
+
+        arStars.appendChild(
+            star
+        );
+
+    }
+
+}
+
+
+createARStars();
+
+
+/* =====================================================
+   DEVICE ORIENTATION
+===================================================== */
+
+let sensorEnabled = false;
+
+let heading = 0;
+
+let pitch = 0;
+
+
+async function enableSensors() {
+
+    try {
+
+        /*
+         iPhone/iPad may require
+         explicit permission.
+        */
+
+        if (
+            typeof DeviceOrientationEvent
+                !== "undefined"
+
+            &&
+
+            typeof DeviceOrientationEvent
+                .requestPermission ===
+                "function"
+        ) {
+
+            const permission =
+                await DeviceOrientationEvent
+                    .requestPermission();
+
+
+            if (
+                permission !==
+                "granted"
+            ) {
+
+                throw new Error(
+                    "Orientation permission denied"
+                );
+
+            }
+
+        }
+
+
+        window.addEventListener(
+            "deviceorientation",
+            handleOrientation,
+            true
+        );
+
+
+        sensorEnabled =
+            true;
+
+
+        document.getElementById(
+            "sensorStatus"
+        ).textContent =
+            "🧭 Sensors active";
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+
+        document.getElementById(
+            "sensorStatus"
+        ).textContent =
+            "⚠ Sensors unavailable";
+
+
+        alert(
+            "Motion/orientation permission was not granted."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ORIENTATION HANDLER
+===================================================== */
+
+function handleOrientation(event) {
+
+    let alpha =
+        event.alpha;
+
+
+    let beta =
+        event.beta;
+
+
+    let gamma =
+        event.gamma;
+
+
+    /*
+      Prefer Apple's compass heading
+      when available.
+    */
+
+    if (
+        typeof event.webkitCompassHeading
+        === "number"
+    ) {
+
+        heading =
+            event.webkitCompassHeading;
+
+    }
+
+    else if (
+        typeof alpha === "number"
+    ) {
+
+        heading =
+            360 - alpha;
+
+    }
+
+
+    if (
+        typeof beta === "number"
+    ) {
+
+        pitch =
+            beta;
+
+    }
+
+
+    document.getElementById(
+        "arHeading"
+    ).textContent =
+        Math.round(heading) +
+        "°";
+
+
+    updateARSky();
+
+}
+
+
+/* =====================================================
+   MOVE AR SKY
+===================================================== */
+
+function updateARSky() {
+
+    const arSky =
+        document.getElementById(
+            "arSky"
+        );
+
+
+    /*
+      Horizontal movement:
+      phone heading changes
+      star field position.
+    */
+
+    const horizontal =
+        -(heading / 360) *
+        100;
+
+
+    /*
+      Vertical movement.
+    */
+
+    const vertical =
+        Math.max(
+            -30,
+            Math.min(
+                30,
+                pitch - 45
+            )
+        );
+
+
+    arSky.style.transform =
+        `translate(${horizontal}%, ${vertical}px)`;
+
+}
+
+
+/* =====================================================
+   SENSOR BUTTON
+===================================================== */
+
+document
+    .getElementById(
+        "sensorBtn"
+    )
+    .onclick =
+    enableSensors;
+
+
+/* =====================================================
+   AR LABELS
+===================================================== */
+
+let arLabels =
+    true;
+
+
+document
+    .getElementById(
+        "arLabelsBtn"
+    )
+    .onclick =
+    function() {
+
+        arLabels =
+            !arLabels;
+
+
+        document
+            .querySelectorAll(
+                ".ar-object"
+            )
+            .forEach(
+                object => {
+
+                    object.style.display =
+                        arLabels
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+    };
+
+
+/* =====================================================
+   AR CLOUDS
+===================================================== */
+
+let arClouds =
+    true;
+
+
+document
+    .getElementById(
+        "arCloudBtn"
+    )
+    .onclick =
+    function() {
+
+        arClouds =
+            !arClouds;
+
+
+        document.getElementById(
+            "arCloudWarning"
+        ).style.display =
+            arClouds
+                ? "block"
+                : "none";
+
+    };
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+document
+    .getElementById(
+        "locationBtn"
+    )
+    .onclick =
+    function() {
+
+        if (
+            !navigator.geolocation
+        ) {
+
+            alert(
+                "Location is not supported."
+            );
+
+            return;
+
+        }
+
+
+        navigator
+            .geolocation
+            .getCurrentPosition(
+
+                position => {
+
+                    alert(
+
+                        "Cosmo Vision\n\n" +
+
+                        "Latitude: " +
+
+                        position.coords
+                            .latitude
+                            .toFixed(4) +
+
+                        "\nLongitude: " +
+
+                        position.coords
+                            .longitude
+                            .toFixed(4)
+
+                    );
+
+                },
+
+                () => {
+
+                    alert(
+                        "Location permission denied."
+                    );
+
+                }
+
+            );
+
+    };
+
+
+/* =====================================================
+   SIMPLE SKY DRAG
+===================================================== */
 
 let dragging = false;
 
-let startX = 0;
-let startY = 0;
+let lastX = 0;
 
-let rotationX = 0;
-let rotationY = 0;
-
-skyMap.addEventListener("pointerdown", (event) => {
-
-    dragging = true;
-
-    startX = event.clientX;
-    startY = event.clientY;
-
-    skyMap.setPointerCapture(event.pointerId);
-});
-
-skyMap.addEventListener("pointermove", (event) => {
-
-    if (!dragging) return;
-
-    const movementX = event.clientX - startX;
-    const movementY = event.clientY - startY;
-
-    rotationY += movementX * 0.15;
-    rotationX -= movementY * 0.05;
-
-    skyMap.style.transform =
-        `perspective(900px)
-         rotateX(${rotationX}deg)
-         rotateY(${rotationY}deg)`;
-
-    startX = event.clientX;
-    startY = event.clientY;
-});
-
-skyMap.addEventListener("pointerup", () => {
-
-    dragging = false;
-
-});
+let rotation = 0;
 
 
-// ==========================================
-// MOUSE / TOUCH WHEEL ZOOM
-// ==========================================
+skyMap.addEventListener(
+    "pointerdown",
+    event => {
 
-let zoom = 1;
+        dragging = true;
 
-skyMap.addEventListener("wheel", (event) => {
+        lastX =
+            event.clientX;
 
-    event.preventDefault();
-
-    if (event.deltaY < 0) {
-        zoom += 0.05;
-    } else {
-        zoom -= 0.05;
     }
-
-    zoom = Math.max(0.8, Math.min(1.6, zoom));
-
-    skyMap.style.transform =
-        `scale(${zoom})
-         rotateX(${rotationX}deg)
-         rotateY(${rotationY}deg)`;
-});
+);
 
 
-// ==========================================
-// LOCATION
-// ==========================================
+window.addEventListener(
+    "pointermove",
+    event => {
 
-const locationBtn =
-    document.getElementById("locationBtn");
+        if (!dragging)
+            return;
 
-locationBtn.addEventListener("click", () => {
 
-    if (!navigator.geolocation) {
+        const difference =
+            event.clientX -
+            lastX;
 
-        alert("Geolocation is not supported by your browser.");
 
-        return;
+        rotation +=
+            difference * .2;
+
+
+        skyMap.style.transform =
+            `rotateY(${rotation}deg)`;
+
+
+        lastX =
+            event.clientX;
+
     }
-
-    locationBtn.textContent = "📍 Finding...";
-
-    navigator.geolocation.getCurrentPosition(
-
-        (position) => {
-
-            const latitude =
-                position.coords.latitude;
-
-            const longitude =
-                position.coords.longitude;
-
-            locationBtn.textContent = "📍 Location Found";
-
-            console.log(
-                "Latitude:",
-                latitude,
-                "Longitude:",
-                longitude
-            );
-
-            alert(
-                `Location found!\n\nLatitude: ${latitude.toFixed(4)}\nLongitude: ${longitude.toFixed(4)}`
-            );
-        },
-
-        () => {
-
-            locationBtn.textContent = "📍 Location";
-
-            alert(
-                "Location permission was not granted."
-            );
-        }
-    );
-});
+);
 
 
-// ==========================================
-// SEARCH BUTTON
-// ==========================================
+window.addEventListener(
+    "pointerup",
+    () => {
 
-const searchBtn =
-    document.getElementById("searchBtn");
+        dragging = false;
 
-searchBtn.addEventListener("click", () => {
-
-    const object =
-        prompt(
-            "Search the sky:\n\nTry: Moon, Venus, Orion"
-        );
-
-    if (!object) return;
-
-    const search =
-        object.toLowerCase();
-
-    if (search.includes("venus")) {
-
-        document.getElementById("venus").scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-        alert("Venus selected.");
-
-    } else if (search.includes("moon")) {
-
-        document.getElementById("moon").scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-        alert("Moon selected.");
-
-    } else if (search.includes("orion")) {
-
-        constellation.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-        alert("Orion selected.");
-
-    } else {
-
-        alert(
-            "Object not found in this prototype."
-        );
     }
-});
+);
 
 
-// ==========================================
-// DEMO CLOUD DATA
-// ==========================================
+/* =====================================================
+   TIMELINE
+===================================================== */
 
-const cloudData = {
+const times = [
 
-    total: 21,
-    low: 12,
-    mid: 25,
-    high: 18,
-    wind: 11,
-    direction: "NW"
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
+    "22:00",
+    "23:00",
+    "00:00",
+    "01:00",
+    "02:00",
+    "03:00",
+    "04:00",
+    "05:00",
+    "06:00"
 
-};
-
-document.getElementById("totalCloud").textContent =
-    cloudData.total + "%";
-
-document.getElementById("lowCloud").textContent =
-    cloudData.low + "%";
-
-document.getElementById("midCloud").textContent =
-    cloudData.mid + "%";
-
-document.getElementById("highCloud").textContent =
-    cloudData.high + "%";
-
-document.getElementById("wind").textContent =
-    cloudData.wind + " km/h";
-
-document.getElementById("windDirection").textContent =
-    cloudData.direction;
+];
 
 
-// ==========================================
-// SKY CLARITY CALCULATION
-// ==========================================
+document
+    .getElementById(
+        "timeSlider"
+    )
+    .oninput =
+    function() {
 
-function calculateClarity(cloudPercentage) {
+        document.getElementById(
+            "selectedTime"
+        ).textContent =
+            times[
+                Number(this.value)
+            ];
 
-    const score =
-        10 - (cloudPercentage / 10);
+    };
 
-    return Math.max(
-        0,
-        Math.min(10, score)
-    );
-}
-
-const clarity =
-    calculateClarity(cloudData.total);
-
-document.getElementById("clarityScore").textContent =
-    clarity.toFixed(1);
-
-if (clarity >= 8) {
-
-    document.getElementById("conditionText").textContent =
-        "Excellent conditions for stargazing";
-
-} else if (clarity >= 6) {
-
-    document.getElementById("conditionText").textContent =
-        "Good conditions for stargazing";
-
-} else if (clarity >= 4) {
-
-    document.getElementById("conditionText").textContent =
-        "Fair conditions — some clouds expected";
-
-} else {
-
-    document.getElementById("conditionText").textContent =
-        "Poor conditions for stargazing";
-}
-
-
-// ==========================================
-// DEBUG MESSAGE
-// ==========================================
 
 console.log(
-    "🌌 Cosmo Vision initialized successfully."
+    "🌌 COSMO VISION AR READY"
+);
+
+console.log(
+    "⭐ Objects:",
+    celestialObjects.length
 );
