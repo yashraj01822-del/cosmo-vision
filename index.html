@@ -40,19 +40,6 @@
         </div>
     </div>
 
-    <!-- Date/Time & Cloud Settings Panels -->
-    <div class="popup-panel hidden" id="cloud-panel">
-        <h3>Cloud Overlay Settings</h3>
-        <div class="control-group">
-            <label for="cloud-opacity">Cloud Density</label>
-            <input type="range" id="cloud-opacity" min="0" max="1" step="0.05" value="0.45">
-        </div>
-        <div class="control-group">
-            <label for="cloud-speed">Drift Speed</label>
-            <input type="range" id="cloud-speed" min="0" max="0.005" step="0.0005" value="0.001">
-        </div>
-    </div>
-
     <!-- Bottom Navigation Bar -->
     <div class="bottom-toolbar">
         <button class="tool-btn" id="btn-search" title="Search Sky Objects">
@@ -61,7 +48,7 @@
         <button class="tool-btn" id="btn-ar" title="Toggle AR Camera Mode">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2m8 3a5 5 0 0 0-5 5a5 5 0 0 0 5 5a5 5 0 0 0 5-5a5 5 0 0 0-5-5m0 2a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3z"/></svg>
         </button>
-        <button class="tool-btn active" id="btn-clouds" title="Cloud Controls">
+        <button class="tool-btn active" id="btn-clouds" title="Toggle Clouds On/Off">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
         </button>
         <button class="tool-btn" id="btn-menu" title="Menu Settings">
