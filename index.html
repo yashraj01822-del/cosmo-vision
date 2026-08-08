@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmo Vision - Real Sky Map & Cloud Overlay</title>
+    <title>Cosmo Vision - Interactive Sky Map</title>
 
     <!-- D3.js and D3-Celestial Dependencies for Real Space Data -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
@@ -11,83 +11,18 @@
     <script src="https://cdn.jsdelivr.net/gh/ofrohn/d3-celestial@master/celestial.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofrohn/d3-celestial@master/celestial.css">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #00050e;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #ffffff;
-        }
-        #celestial-map {
-            width: 100vw;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        #cloud-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 2;
-            pointer-events: none; /* Let user drag/zoom the star map through the cloud overlay */
-            opacity: 0.45;
-            transition: opacity 0.2s ease;
-        }
-        .ui-panel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 10;
-            background: rgba(10, 15, 30, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 16px 22px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
-        .ui-panel h1 {
-            font-size: 1.1rem;
-            color: #8ab4f8;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-        .control-group {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        label {
-            font-size: 0.8rem;
-            color: #d1d5db;
-        }
-        input[type="range"] {
-            accent-color: #8ab4f8;
-            cursor: pointer;
-        }
-    </style>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Real Celestial Map Layer -->
+    <!-- Real Celestial Map Container -->
     <div id="celestial-map"></div>
 
-    <!-- Dummy Animated Cloud Overlay Layer -->
+    <!-- Dummy Animated Cloud Canvas -->
     <canvas id="cloud-canvas"></canvas>
 
-    <!-- UI Overlay Controls -->
+    <!-- Control UI Panel -->
     <div class="ui-panel">
         <h1>Cosmo Vision</h1>
         <div class="control-group">
@@ -100,139 +35,7 @@
         </div>
     </div>
 
-    <script>
-        // ----------------------------------------------------
-        // 1. REAL CELESTIAL MAP CONFIGURATION
-        // ----------------------------------------------------
-        const config = {
-            width: window.innerWidth,
-            height: window.innerHeight,
-            projection: "orthographic", // Interactive globe projection like Stellarium
-            transform: "equatorial",
-            center: [0, 20, 0],         // Initial view coordinates [RA, Dec, Roll]
-            orientation: "down",
-            follow: "zenith",
-            geopos: null,               // Uses real astronomical sky orientation
-            
-            // Star Catalog Settings (Real Astronomical Data)
-            stars: {
-                show: true,
-                limit: 6,               // Show stars down to magnitude 6 (~6,000 visible stars)
-                colors: true,            // Spectral color rendition
-                names: true,            // Show major star names
-                propername: true,
-                namelimit: 2.5,
-                size: 5,
-                data: 'stars.6.json'    // Real Hipparcos/Gaia dataset from CDN
-            },
-
-            // Constellation Lines & Names
-            constellations: {
-                show: true,
-                names: true,
-                lines: true,
-                linewidth: 1,
-                lineStyle: { stroke: "rgba(138, 180, 248, 0.4)", width: 1, dash: [2, 2] },
-                bounds: false
-            },
-
-            // Planets & Solar System
-            planets: {
-                show: true,
-                names: true,
-                colors: true
-            },
-
-            // Deep Sky Objects (Nebulae, Galaxies)
-            dsos: { show: true, limit: 4 },
-
-            // Interactive Map Controls
-            interactive: true,
-            controls: true,
-            datapath: "https://cdn.jsdelivr.net/gh/ofrohn/d3-celestial@master/data/"
-        };
-
-        // Initialize Real Sky Map
-        Celestial.display(config);
-
-        // ----------------------------------------------------
-        // 2. DUMMY CLOUD OVERLAY CANVAS
-        // ----------------------------------------------------
-        const cloudCanvas = document.getElementById('cloud-canvas');
-        const cloudCtx = cloudCanvas.getContext('2d');
-
-        let cloudOffset = 0;
-        let driftSpeed = 0.001;
-
-        function resizeCloudCanvas() {
-            cloudCanvas.width = window.innerWidth;
-            cloudCanvas.height = window.innerHeight;
-        }
-
-        function renderClouds(offset) {
-            const width = cloudCanvas.width;
-            const height = cloudCanvas.height;
-
-            cloudCtx.clearRect(0, 0, width, height);
-
-            // Base atmospheric haze
-            const mainGradient = cloudCtx.createRadialGradient(
-                width / 2 + Math.sin(offset) * 120,
-                height / 2 + Math.cos(offset) * 60,
-                100,
-                width / 2,
-                height / 2,
-                Math.max(width, height) * 0.7
-            );
-            mainGradient.addColorStop(0, 'rgba(180, 200, 230, 0.35)');
-            mainGradient.addColorStop(0.5, 'rgba(90, 110, 140, 0.2)');
-            mainGradient.addColorStop(1, 'rgba(5, 10, 20, 0.6)');
-
-            cloudCtx.fillStyle = mainGradient;
-            cloudCtx.fillRect(0, 0, width, height);
-
-            // Procedural cloud patches drifting across the map
-            for (let i = 0; i < 6; i++) {
-                const cx = ((width * 0.25 * i) + (offset * 120 * (i + 1))) % (width + 600) - 300;
-                const cy = ((height * 0.3 * i) + Math.sin(offset + i) * 100) % (height + 400) - 200;
-                
-                const cloudGradient = cloudCtx.createRadialGradient(cx, cy, 20, cx, cy, 320);
-                cloudGradient.addColorStop(0, 'rgba(210, 225, 250, 0.3)');
-                cloudGradient.addColorStop(0.6, 'rgba(120, 140, 170, 0.15)');
-                cloudGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-                cloudCtx.fillStyle = cloudGradient;
-                cloudCtx.beginPath();
-                cloudCtx.arc(cx, cy, 320, 0, Math.PI * 2);
-                cloudCtx.fill();
-            }
-        }
-
-        function animateClouds() {
-            cloudOffset += driftSpeed;
-            renderClouds(cloudOffset);
-            requestAnimationFrame(animateClouds);
-        }
-
-        // ----------------------------------------------------
-        // 3. UI LISTENERS & RESIZE
-        // ----------------------------------------------------
-        document.getElementById('cloud-opacity').addEventListener('input', (e) => {
-            cloudCanvas.style.opacity = e.target.value;
-        });
-
-        document.getElementById('cloud-speed').addEventListener('input', (e) => {
-            driftSpeed = parseFloat(e.target.value);
-        });
-
-        window.addEventListener('resize', () => {
-            resizeCloudCanvas();
-            Celestial.resize({ width: window.innerWidth, height: window.innerHeight });
-        });
-
-        // Initialize Cloud Overlay Loop
-        resizeCloudCanvas();
-        animateClouds();
-    </script>
+    <!-- Application Script -->
+    <script src="app.js"></script>
 </body>
 </html>
