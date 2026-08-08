@@ -1,13 +1,5 @@
 // ----------------------------------------------------
-// 1. TIME CONTROL ENGINE & STATE
-// ----------------------------------------------------
-let simulatedTime = new Date(); // Active sky time
-let timeMultiplier = 1;         // 1 = realtime, >1 = fast-forward, <0 = rewind
-let isTimePaused = false;
-let lastFrameTimestamp = performance.now();
-
-// ----------------------------------------------------
-// 2. CELESTIAL MAP INITIALIZATION
+// 1. CELESTIAL MAP SETUP (Stellarium Blueprint Style)
 // ----------------------------------------------------
 const celestialConfig = {
     width: window.innerWidth,
@@ -19,7 +11,7 @@ const celestialConfig = {
     follow: "zenith",
     geopos: null,
 
-    background: { fill: "#02040a", stroke: "#000000", opacity: 0 },
+    background: { fill: "transparent", stroke: "#000000", opacity: 0 },
 
     stars: {
         show: true,
@@ -28,7 +20,7 @@ const celestialConfig = {
         names: true,            
         propername: true,
         namelimit: 2.0,
-        size: 6,
+        size: 5,
         data: 'stars.6.json'    
     },
 
@@ -37,32 +29,31 @@ const celestialConfig = {
         names: true,
         lines: true,
         linewidth: 1.2,
-        lineStyle: { stroke: "rgba(76, 201, 240, 0.45)", width: 1.2, dash: [3, 3] },
+        lineStyle: { stroke: "rgba(138, 180, 248, 0.5)", width: 1.2, dash: [2, 2] },
         bounds: false
     },
 
-    mw: { show: true, style: { fill: "rgba(120, 160, 220, 0.12)" } },
+    mw: { show: true, style: { fill: "rgba(140, 180, 240, 0.1)" } },
 
     planets: { show: true, names: true, colors: true },
     dsos: { show: true, limit: 4 },
 
     interactive: true,
-    controls: true,
+    controls: false, // We use custom mobile bottom bar tools
     datapath: "https://cdn.jsdelivr.net/gh/ofrohn/d3-celestial@master/data/"
 };
 
-// Display Celestial Map
+// Initialize Map
 Celestial.display(celestialConfig);
 
 // ----------------------------------------------------
-// 3. DYNAMIC CLOUD OVERLAY ENGINE
+// 2. PROCEDURAL CLOUD OVERLAY CANVAS
 // ----------------------------------------------------
 const cloudCanvas = document.getElementById('cloud-canvas');
 const cloudCtx = cloudCanvas.getContext('2d');
 
 let cloudOffset = 0;
 let driftSpeed = 0.001;
-let isCloudsEnabled = true;
 
 function resizeCloudCanvas() {
     cloudCanvas.width = window.innerWidth;
@@ -70,212 +61,94 @@ function resizeCloudCanvas() {
 }
 
 function renderClouds(offset) {
-    if (!isCloudsEnabled) {
-        cloudCtx.clearRect(0, 0, cloudCanvas.width, cloudCanvas.height);
-        return;
-    }
-
     const width = cloudCanvas.width;
     const height = cloudCanvas.height;
 
     cloudCtx.clearRect(0, 0, width, height);
 
-    // Atmospheric cloud backdrop
+    // Subtle atmospheric haze gradient
     const mainGradient = cloudCtx.createRadialGradient(
-        width / 2 + Math.sin(offset) * 120,
-        height / 2 + Math.cos(offset) * 60,
-        100,
+        width / 2 + Math.sin(offset) * 100,
+        height / 2 + Math.cos(offset) * 50,
+        80,
         width / 2,
         height / 2,
-        Math.max(width, height) * 0.75
+        Math.max(width, height) * 0.7
     );
-    mainGradient.addColorStop(0, 'rgba(140, 170, 210, 0.3)');
-    mainGradient.addColorStop(0.5, 'rgba(60, 80, 120, 0.15)');
-    mainGradient.addColorStop(1, 'rgba(2, 4, 10, 0.5)');
+    mainGradient.addColorStop(0, 'rgba(160, 185, 220, 0.25)');
+    mainGradient.addColorStop(0.5, 'rgba(70, 95, 130, 0.12)');
+    mainGradient.addColorStop(1, 'rgba(2, 4, 11, 0.4)');
 
     cloudCtx.fillStyle = mainGradient;
     cloudCtx.fillRect(0, 0, width, height);
 
-    // Dynamic cloud formations
-    for (let i = 0; i < 7; i++) {
-        const cx = ((width * 0.22 * i) + (offset * 140 * (i + 1))) % (width + 600) - 300;
-        const cy = ((height * 0.28 * i) + Math.sin(offset + i) * 110) % (height + 400) - 200;
+    // Drifting cloud formations
+    for (let i = 0; i < 6; i++) {
+        const cx = ((width * 0.25 * i) + (offset * 130 * (i + 1))) % (width + 600) - 300;
+        const cy = ((height * 0.3 * i) + Math.sin(offset + i) * 90) % (height + 400) - 200;
         
-        const cloudGradient = cloudCtx.createRadialGradient(cx, cy, 20, cx, cy, 340);
-        cloudGradient.addColorStop(0, 'rgba(180, 205, 235, 0.25)');
-        cloudGradient.addColorStop(0.6, 'rgba(90, 115, 150, 0.1)');
+        const cloudGradient = cloudCtx.createRadialGradient(cx, cy, 20, cx, cy, 300);
+        cloudGradient.addColorStop(0, 'rgba(190, 210, 240, 0.22)');
+        cloudGradient.addColorStop(0.6, 'rgba(100, 125, 160, 0.08)');
         cloudGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         cloudCtx.fillStyle = cloudGradient;
         cloudCtx.beginPath();
-        cloudCtx.arc(cx, cy, 340, 0, Math.PI * 2);
+        cloudCtx.arc(cx, cy, 300, 0, Math.PI * 2);
         cloudCtx.fill();
     }
 }
 
-// Main Animation & Time Loop
-function mainLoop(now) {
-    const deltaMs = now - lastFrameTimestamp;
-    lastFrameTimestamp = now;
-
-    // Advance simulated time based on speed multiplier
-    if (!isTimePaused) {
-        simulatedTime = new Date(simulatedTime.getTime() + deltaMs * timeMultiplier);
-        
-        // Update celestial sky orientation if time speed is significant
-        if (Math.abs(timeMultiplier) > 10) {
-            Celestial.date(simulatedTime);
-        }
-    }
-
-    // Render atmospheric cloud drift
+function animateClouds() {
     cloudOffset += driftSpeed;
     renderClouds(cloudOffset);
-
-    // Update Header Display
-    document.getElementById('time-display').innerText = 
-        simulatedTime.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
-
-    requestAnimationFrame(mainLoop);
+    requestAnimationFrame(animateClouds);
 }
 
 // ----------------------------------------------------
-// 4. STELLARIUM TIME CONTROLS & LISTENERS
+// 3. UI CONTROLS & AR CAMERA MODE
 // ----------------------------------------------------
-const btnPlayPause = document.getElementById('btn-play-pause');
-const btnRewind = document.getElementById('btn-rewind');
-const btnFFwd = document.getElementById('btn-ffwd');
-const btnRealtime = document.getElementById('btn-realtime');
-const btnTimeDialog = document.getElementById('btn-time-dialog');
-
-const iconPause = document.getElementById('icon-pause');
-const iconPlay = document.getElementById('icon-play');
-const speedBadge = document.getElementById('speed-multiplier-display');
-
-const timePanel = document.getElementById('time-panel');
-const datetimePicker = document.getElementById('datetime-picker');
-
-function updateSpeedBadge() {
-    speedBadge.innerText = `${timeMultiplier}x`;
-}
-
-// Pause / Play Toggle
-btnPlayPause.addEventListener('click', () => {
-    isTimePaused = !isTimePaused;
-    btnPlayPause.classList.toggle('active', !isTimePaused);
-    iconPause.classList.toggle('hidden', isTimePaused);
-    iconPlay.classList.toggle('hidden', !isTimePaused);
-});
-
-// Fast Forward (10x -> 100x -> 1000x -> 10000x)
-btnFFwd.addEventListener('click', () => {
-    isTimePaused = false;
-    btnPlayPause.classList.add('active');
-    iconPause.classList.remove('hidden');
-    iconPlay.classList.add('hidden');
-
-    if (timeMultiplier <= 0) timeMultiplier = 10;
-    else timeMultiplier *= 10;
-
-    if (timeMultiplier > 10000) timeMultiplier = 1;
-    updateSpeedBadge();
-});
-
-// Rewind (-10x -> -100x -> -1000x -> -10000x)
-btnRewind.addEventListener('click', () => {
-    isTimePaused = false;
-    btnPlayPause.classList.add('active');
-    iconPause.classList.remove('hidden');
-    iconPlay.classList.add('hidden');
-
-    if (timeMultiplier >= 0) timeMultiplier = -10;
-    else timeMultiplier *= 10;
-
-    if (timeMultiplier < -10000) timeMultiplier = -1;
-    updateSpeedBadge();
-});
-
-// Jump back to Current Real Time
-btnRealtime.addEventListener('click', () => {
-    simulatedTime = new Date();
-    timeMultiplier = 1;
-    isTimePaused = false;
-    updateSpeedBadge();
-    Celestial.date(simulatedTime);
-
-    btnPlayPause.classList.add('active');
-    iconPause.classList.remove('hidden');
-    iconPlay.classList.add('hidden');
-});
-
-// Open Date/Time Dialog Panel
-btnTimeDialog.addEventListener('click', () => {
-    timePanel.classList.toggle('hidden');
-    btnTimeDialog.classList.toggle('active');
-
-    // Pre-fill input with currently simulated date
-    const localIso = new Date(simulatedTime.getTime() - (simulatedTime.getTimezoneOffset() * 60000))
-        .toISOString().slice(0, 16);
-    datetimePicker.value = localIso;
-});
-
-// Apply Selected Custom Date/Time
-document.getElementById('btn-apply-time').addEventListener('click', () => {
-    if (datetimePicker.value) {
-        simulatedTime = new Date(datetimePicker.value);
-        Celestial.date(simulatedTime);
-    }
-    timePanel.classList.add('hidden');
-    btnTimeDialog.classList.remove('active');
-});
-
-document.getElementById('btn-now-time').addEventListener('click', () => {
-    simulatedTime = new Date();
-    Celestial.date(simulatedTime);
-    timePanel.classList.add('hidden');
-    btnTimeDialog.classList.remove('active');
-});
-
-// ----------------------------------------------------
-// 5. DISPLAY TOGGLES & RESIZE
-// ----------------------------------------------------
-const btnConstellations = document.getElementById('btn-constellations');
-const btnNames = document.getElementById('btn-names');
-const btnGrid = document.getElementById('btn-grid');
 const btnClouds = document.getElementById('btn-clouds');
 const cloudPanel = document.getElementById('cloud-panel');
+const btnAr = document.getElementById('btn-ar');
+const arCameraFeed = document.getElementById('ar-camera-feed');
+const celestialContainer = document.getElementById('celestial-map');
+let isArActive = false;
 
-let showLines = true;
-let showNames = true;
-let showGrid = true;
-
-btnConstellations.addEventListener('click', () => {
-    showLines = !showLines;
-    btnConstellations.classList.toggle('active', showLines);
-    Celestial.sky.constellations.lines = showLines;
-    Celestial.reload();
-});
-
-btnNames.addEventListener('click', () => {
-    showNames = !showNames;
-    btnNames.classList.toggle('active', showNames);
-    Celestial.sky.stars.names = showNames;
-    Celestial.sky.constellations.names = showNames;
-    Celestial.reload();
-});
-
-btnGrid.addEventListener('click', () => {
-    showGrid = !showGrid;
-    btnGrid.classList.toggle('active', showGrid);
-    Celestial.sky.grid.show = showGrid;
-    Celestial.reload();
-});
-
+// Toggle Cloud Menu
 btnClouds.addEventListener('click', () => {
     cloudPanel.classList.toggle('hidden');
     btnClouds.classList.toggle('active');
 });
 
+// Toggle AR Camera Sensor Mode
+btnAr.addEventListener('click', async () => {
+    isArActive = !isArActive;
+    btnAr.classList.toggle('active', isArActive);
+
+    if (isArActive) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            arCameraFeed.srcObject = stream;
+            arCameraFeed.classList.remove('hidden');
+            celestialContainer.style.background = 'transparent'; // Make map transparent over camera
+        } catch (err) {
+            alert('Camera access denied or unavailable.');
+            isArActive = false;
+            btnAr.classList.remove('active');
+        }
+    } else {
+        const stream = arCameraFeed.srcObject;
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        arCameraFeed.srcObject = null;
+        arCameraFeed.classList.add('hidden');
+        celestialContainer.style.background = 'radial-gradient(circle at center, #0c1432 0%, #02040b 100%)';
+    }
+});
+
+// Sliders
 document.getElementById('cloud-opacity').addEventListener('input', (e) => {
     cloudCanvas.style.opacity = e.target.value;
 });
@@ -284,11 +157,20 @@ document.getElementById('cloud-speed').addEventListener('input', (e) => {
     driftSpeed = parseFloat(e.target.value);
 });
 
+// Window resizing
 window.addEventListener('resize', () => {
     resizeCloudCanvas();
     Celestial.resize({ width: window.innerWidth, height: window.innerHeight });
 });
 
-// Start loop
+// Live clock string
+setInterval(() => {
+    const now = new Date();
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const mins = String(now.getUTCMinutes()).padStart(2, '0');
+    document.getElementById('time-display').innerText = `${hours}:${mins}`;
+}, 1000);
+
+// Initialize App Loops
 resizeCloudCanvas();
-requestAnimationFrame(mainLoop);
+animateClouds();
