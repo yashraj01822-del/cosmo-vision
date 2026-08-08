@@ -1,12 +1,12 @@
 // ----------------------------------------------------
-// 1. CELESTIAL MAP SETUP (Stellarium Blueprint Style)
+// 1. CELESTIAL MAP SETUP (Full-Screen Stereographic Projection)
 // ----------------------------------------------------
 const celestialConfig = {
     width: window.innerWidth,
     height: window.innerHeight,
-    projection: "orthographic", 
+    projection: "stereographic", 
     transform: "equatorial",
-    center: [0, 20, 0],         
+    center: [0, 30, 0],         
     orientation: "down",
     follow: "zenith",
     geopos: null,
@@ -39,7 +39,7 @@ const celestialConfig = {
     dsos: { show: true, limit: 4 },
 
     interactive: true,
-    controls: false, // We use custom mobile bottom bar tools
+    controls: false,
     datapath: "https://cdn.jsdelivr.net/gh/ofrohn/d3-celestial@master/data/"
 };
 
@@ -53,7 +53,7 @@ const cloudCanvas = document.getElementById('cloud-canvas');
 const cloudCtx = cloudCanvas.getContext('2d');
 
 let cloudOffset = 0;
-let driftSpeed = 0.001;
+const driftSpeed = 0.001;
 
 function resizeCloudCanvas() {
     cloudCanvas.width = window.innerWidth;
@@ -66,7 +66,6 @@ function renderClouds(offset) {
 
     cloudCtx.clearRect(0, 0, width, height);
 
-    // Subtle atmospheric haze gradient
     const mainGradient = cloudCtx.createRadialGradient(
         width / 2 + Math.sin(offset) * 100,
         height / 2 + Math.cos(offset) * 50,
@@ -82,7 +81,6 @@ function renderClouds(offset) {
     cloudCtx.fillStyle = mainGradient;
     cloudCtx.fillRect(0, 0, width, height);
 
-    // Drifting cloud formations
     for (let i = 0; i < 6; i++) {
         const cx = ((width * 0.25 * i) + (offset * 130 * (i + 1))) % (width + 600) - 300;
         const cy = ((height * 0.3 * i) + Math.sin(offset + i) * 90) % (height + 400) - 200;
@@ -109,16 +107,21 @@ function animateClouds() {
 // 3. UI CONTROLS & AR CAMERA MODE
 // ----------------------------------------------------
 const btnClouds = document.getElementById('btn-clouds');
-const cloudPanel = document.getElementById('cloud-panel');
 const btnAr = document.getElementById('btn-ar');
 const arCameraFeed = document.getElementById('ar-camera-feed');
 const celestialContainer = document.getElementById('celestial-map');
 let isArActive = false;
+let areCloudsActive = true;
 
-// Toggle Cloud Menu
+// Toggle Clouds On/Off (Default is On)
 btnClouds.addEventListener('click', () => {
-    cloudPanel.classList.toggle('hidden');
-    btnClouds.classList.toggle('active');
+    areCloudsActive = !areCloudsActive;
+    btnClouds.classList.toggle('active', areCloudsActive);
+    if (areCloudsActive) {
+        cloudCanvas.classList.remove('hidden');
+    } else {
+        cloudCanvas.classList.add('hidden');
+    }
 });
 
 // Toggle AR Camera Sensor Mode
@@ -131,7 +134,7 @@ btnAr.addEventListener('click', async () => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             arCameraFeed.srcObject = stream;
             arCameraFeed.classList.remove('hidden');
-            celestialContainer.style.background = 'transparent'; // Make map transparent over camera
+            celestialContainer.style.background = 'transparent';
         } catch (err) {
             alert('Camera access denied or unavailable.');
             isArActive = false;
@@ -146,15 +149,6 @@ btnAr.addEventListener('click', async () => {
         arCameraFeed.classList.add('hidden');
         celestialContainer.style.background = 'radial-gradient(circle at center, #0c1432 0%, #02040b 100%)';
     }
-});
-
-// Sliders
-document.getElementById('cloud-opacity').addEventListener('input', (e) => {
-    cloudCanvas.style.opacity = e.target.value;
-});
-
-document.getElementById('cloud-speed').addEventListener('input', (e) => {
-    driftSpeed = parseFloat(e.target.value);
 });
 
 // Window resizing
