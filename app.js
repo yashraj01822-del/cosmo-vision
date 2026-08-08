@@ -1,179 +1,170 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
+// ----------------------------------------------------
+// 1. CELESTIAL MAP SETUP (Immersive Full-Screen View)
+// ----------------------------------------------------
+const celestialConfig = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    projection: "mercator", // Expands seamlessly across the full viewport like a video feed
+    transform: "equatorial",
+    center: [0, 10, 0],         
+    orientation: "down",
+    follow: "zenith",
+    geopos: null,
+
+    background: { fill: "transparent", stroke: "transparent", opacity: 0 },
+
+    stars: {
+        show: true,
+        limit: 6,               
+        colors: true,            
+        names: true,            
+        propername: true,
+        namelimit: 2.0,
+        size: 5,
+        data: 'stars.6.json'    
+    },
+
+    constellations: {
+        show: true,
+        names: true,
+        lines: true,
+        linewidth: 1.2,
+        lineStyle: { stroke: "rgba(138, 180, 248, 0.6)", width: 1.2, dash: [2, 2] },
+        bounds: false
+    },
+
+    mw: { show: true, style: { fill: "rgba(140, 180, 240, 0.15)" } },
+
+    planets: { show: true, names: true, colors: true },
+    dsos: { show: true, limit: 4 },
+
+    interactive: true,
+    controls: false,
+    datapath: "https://cdn.jsdelivr.net/gh/ofrohn/d3-celestial@master/data/"
+};
+
+// Initialize Map
+Celestial.display(celestialConfig);
+
+// ----------------------------------------------------
+// 2. PROCEDURAL CLOUD OVERLAY CANVAS
+// ----------------------------------------------------
+const cloudCanvas = document.getElementById('cloud-canvas');
+const cloudCtx = cloudCanvas.getContext('2d');
+
+let cloudOffset = 0;
+const driftSpeed = 0.001;
+
+function resizeCloudCanvas() {
+    cloudCanvas.width = window.innerWidth;
+    cloudCanvas.height = window.innerHeight;
 }
 
-body, html {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #02040b;
-    font-family: 'Roboto', sans-serif;
-    color: #ffffff;
+function renderClouds(offset) {
+    const width = cloudCanvas.width;
+    const height = cloudCanvas.height;
+
+    cloudCtx.clearRect(0, 0, width, height);
+
+    const mainGradient = cloudCtx.createRadialGradient(
+        width / 2 + Math.sin(offset) * 100,
+        height / 2 + Math.cos(offset) * 50,
+        80,
+        width / 2,
+        height / 2,
+        Math.max(width, height) * 0.7
+    );
+    mainGradient.addColorStop(0, 'rgba(160, 185, 220, 0.25)');
+    mainGradient.addColorStop(0.5, 'rgba(70, 95, 130, 0.12)');
+    mainGradient.addColorStop(1, 'rgba(2, 4, 11, 0.4)');
+
+    cloudCtx.fillStyle = mainGradient;
+    cloudCtx.fillRect(0, 0, width, height);
+
+    for (let i = 0; i < 6; i++) {
+        const cx = ((width * 0.25 * i) + (offset * 130 * (i + 1))) % (width + 600) - 300;
+        const cy = ((height * 0.3 * i) + Math.sin(offset + i) * 90) % (height + 400) - 200;
+        
+        const cloudGradient = cloudCtx.createRadialGradient(cx, cy, 20, cx, cy, 300);
+        cloudGradient.addColorStop(0, 'rgba(190, 210, 240, 0.22)');
+        cloudGradient.addColorStop(0.6, 'rgba(100, 125, 160, 0.08)');
+        cloudGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        cloudCtx.fillStyle = cloudGradient;
+        cloudCtx.beginPath();
+        cloudCtx.arc(cx, cy, 300, 0, Math.PI * 2);
+        cloudCtx.fill();
+    }
 }
 
-/* Full Screen Immersive Container */
-#celestial-map {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    background: radial-gradient(circle at center, #0c1432 0%, #02040b 100%);
+function animateClouds() {
+    cloudOffset += driftSpeed;
+    renderClouds(cloudOffset);
+    requestAnimationFrame(animateClouds);
 }
 
-/* Clear any boxed constraints from celestial components */
-#celestial-map, #celestial-map > div, #celestial-map svg, #celestial-map canvas {
-    width: 100% !important;
-    height: 100% !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    clip-path: none !important;
-}
+// ----------------------------------------------------
+// 3. UI CONTROLS & AR CAMERA MODE
+// ----------------------------------------------------
+const btnClouds = document.getElementById('btn-clouds');
+const btnAr = document.getElementById('btn-ar');
+const arCameraFeed = document.getElementById('ar-camera-feed');
+const celestialContainer = document.getElementById('celestial-map');
+let isArActive = false;
+let areCloudsActive = true;
 
-/* Hide default d3-celestial border ring */
-.d3-celestial-globe {
-    stroke: none !important;
-    fill: transparent !important;
-}
+// Toggle Clouds On/Off (Default is On)
+btnClouds.addEventListener('click', () => {
+    areCloudsActive = !areCloudsActive;
+    btnClouds.classList.toggle('active', areCloudsActive);
+    if (areCloudsActive) {
+        cloudCanvas.classList.remove('hidden');
+    } else {
+        cloudCanvas.classList.add('hidden');
+    }
+});
 
-/* AR Camera Feed Layer */
-#ar-camera-feed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 0;
-}
+// Toggle AR Camera Sensor Mode
+btnAr.addEventListener('click', async () => {
+    isArActive = !isArActive;
+    btnAr.classList.toggle('active', isArActive);
 
-#ar-camera-feed.hidden {
-    display: none;
-}
+    if (isArActive) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            arCameraFeed.srcObject = stream;
+            arCameraFeed.classList.remove('hidden');
+            celestialContainer.style.background = 'transparent';
+        } catch (err) {
+            alert('Camera access denied or unavailable.');
+            isArActive = false;
+            btnAr.classList.remove('active');
+        }
+    } else {
+        const stream = arCameraFeed.srcObject;
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        arCameraFeed.srcObject = null;
+        arCameraFeed.classList.add('hidden');
+        celestialContainer.style.background = 'radial-gradient(circle at center, #0c1432 0%, #02040b 100%)';
+    }
+});
 
-/* Horizon Atmosphere Glow */
-#horizon-glow {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
-    height: 30vh;
-    background: linear-gradient(to top, rgba(14, 32, 60, 0.5) 0%, rgba(2, 4, 11, 0) 100%);
-    pointer-events: none;
-    z-index: 2;
-}
+// Window resizing
+window.addEventListener('resize', () => {
+    resizeCloudCanvas();
+    Celestial.resize({ width: window.innerWidth, height: window.innerHeight });
+});
 
-/* Cloud Canvas Overlay */
-#cloud-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 3;
-    pointer-events: none;
-    opacity: 0.45;
-    transition: opacity 0.3s ease;
-}
+// Live clock string
+setInterval(() => {
+    const now = new Date();
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const mins = String(now.getUTCMinutes()).padStart(2, '0');
+    document.getElementById('time-display').innerText = `${hours}:${mins}`;
+}, 1000);
 
-#cloud-canvas.hidden {
-    opacity: 0;
-}
-
-/* Top Bar Layout */
-.top-bar {
-    position: absolute;
-    top: 15px;
-    left: 0;
-    width: 100%;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 10;
-    pointer-events: auto;
-}
-
-.top-text-btn {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    cursor: pointer;
-    backdrop-filter: blur(5px);
-}
-
-.time-readout {
-    font-family: monospace;
-    font-size: 1rem;
-    letter-spacing: 1px;
-    color: #cbd5e1;
-}
-
-.icon-btn {
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-}
-
-.icon-btn svg {
-    width: 100%;
-    height: 100%;
-}
-
-/* Bottom Toolbar (Stellarium Style Pill) */
-.bottom-toolbar {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(10, 16, 28, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 8px 20px;
-    border-radius: 35px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-}
-
-.tool-btn {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #94a3b8;
-    cursor: pointer;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
-}
-
-.tool-btn svg {
-    width: 22px;
-    height: 22px;
-}
-
-.tool-btn:hover {
-    color: #ffffff;
-}
-
-.tool-btn.active {
-    color: #8ab4f8;
-    filter: drop-shadow(0 0 6px rgba(138, 180, 248, 0.6));
-}
+// Initialize App Loops
+resizeCloudCanvas();
+animateClouds();
