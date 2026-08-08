@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     <title>Cosmo Vision</title>
 
@@ -12,731 +12,150 @@
 
 <body>
 
+<!-- TOP BAR -->
 <header class="topbar">
 
     <div class="brand">
-
-        <img src="logo.jpg.jpeg" alt="Cosmo Vision">
+        <div class="logo">✦</div>
 
         <div>
-            <h1>COSMO VISION</h1>
-            <p>WHAT CLOUDS HIDE, WE SHOW.</p>
+            <h1>Cosmo Vision</h1>
+            <p>What clouds hide, we show.</p>
         </div>
-
     </div>
 
-    <div class="header-actions">
-
-        <button id="locationBtn">
-            📍 Location
-        </button>
-
-        <button id="cameraTopBtn">
-            📷 AR Sky
-        </button>
-
+    <div class="top-actions">
+        <button id="locationBtn" title="Location">📍</button>
+        <button id="settingsBtn" title="Settings">⚙️</button>
     </div>
 
 </header>
 
 
-<section class="hero">
+<!-- SEARCH -->
+<div class="search-box">
 
-    <div class="hero-content">
+    <span>🔍</span>
 
-        <div class="eyebrow">
-            CLOUD-AWARE ASTRONOMY
+    <input
+        id="searchInput"
+        type="text"
+        placeholder="Search stars, planets, nebulae..."
+    >
+
+    <button id="searchBtn">Search</button>
+
+</div>
+
+
+<!-- OBJECT SEARCH RESULTS -->
+<div id="searchResults" class="search-results"></div>
+
+
+<!-- MAIN SKY -->
+<main>
+
+    <section class="sky-container">
+
+        <canvas id="skyCanvas"></canvas>
+
+        <div class="direction north">N</div>
+        <div class="direction east">E</div>
+        <div class="direction south">S</div>
+        <div class="direction west">W</div>
+
+
+        <!-- SKY INFORMATION -->
+        <div class="sky-info">
+
+            <div class="score">
+                <span>Sky Clarity</span>
+                <strong id="clarity">8.7</strong>
+                <small>/10</small>
+            </div>
+
+            <div class="weather">
+                <span>☁ Cloud Cover</span>
+                <strong id="cloudPercent">24%</strong>
+            </div>
+
         </div>
 
-        <h2>
-            WHAT CLOUDS HIDE,<br>
-            <span>WE SHOW.</span>
-        </h2>
 
-        <p>
-            Explore the night sky, discover celestial
-            objects and point your phone toward the sky
-            with Cosmo Vision AR.
-        </p>
+        <!-- OBJECT INFO -->
+        <div id="objectInfo" class="object-info hidden">
 
-        <button class="primary-btn" id="exploreBtn">
-            🌌 Explore the Sky
+            <button id="closeObject">×</button>
+
+            <span id="objectType">STAR</span>
+
+            <h2 id="objectName">Sirius</h2>
+
+            <p id="objectDescription">
+                The brightest star in Earth's night sky.
+            </p>
+
+            <div class="object-data">
+                <span>RA <b id="objectRA">06h 45m</b></span>
+                <span>DEC <b id="objectDEC">−16° 43′</b></span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTROLS -->
+    <section class="controls">
+
+        <button id="arBtn">
+            📷
+            <span>AR Sky</span>
         </button>
 
-        <button class="primary-btn camera-launch"
-                id="cameraHeroBtn">
-            📷 Enable Camera Sky
+        <button id="cloudBtn">
+            ☁️
+            <span>Clouds</span>
         </button>
 
-    </div>
-
-</section>
-
-
-<!-- =================================================
-     AR CAMERA MODE
-================================================== -->
-
-<section class="ar-section" id="arSection">
-
-    <div class="ar-header">
-
-        <div>
-
-            <div class="small-label">
-                AUGMENTED SKY
-            </div>
-
-            <h2>
-                Camera Sky
-            </h2>
-
-        </div>
-
-        <button id="closeAR">
-            ✕ Close
+        <button id="telescopeBtn">
+            🔭
+            <span>Telescope</span>
         </button>
 
-    </div>
-
-
-    <div class="ar-view">
-
-        <!-- CAMERA -->
-
-        <video
-            id="cameraVideo"
-            autoplay
-            playsinline>
-        </video>
-
-
-        <!-- DARKEN CAMERA -->
-
-        <div class="camera-dark"></div>
-
-
-        <!-- AR SKY -->
-
-        <div class="ar-sky"
-             id="arSky">
-
-
-            <!-- STARS -->
-
-            <div id="arStars"></div>
-
-
-            <!-- OBJECTS -->
-
-            <div class="ar-object ar-sirius"
-                 data-name="Sirius">
-
-                <span class="ar-star">✦</span>
-
-                <label>Sirius</label>
-
-            </div>
-
-
-            <div class="ar-object ar-jupiter"
-                 data-name="Jupiter">
-
-                <span class="ar-planet">●</span>
-
-                <label>Jupiter</label>
-
-            </div>
-
-
-            <div class="ar-object ar-orion"
-                 data-name="Orion">
-
-                <span class="constellation">✦</span>
-
-                <label>Orion</label>
-
-            </div>
-
-
-            <div class="ar-object ar-pleiades"
-                 data-name="Pleiades">
-
-                <span class="cluster">✦ ✦ ✦</span>
-
-                <label>Pleiades</label>
-
-            </div>
-
-
-            <div class="ar-object ar-andromeda"
-                 data-name="Andromeda Galaxy">
-
-                <span class="galaxy">◉</span>
-
-                <label>Andromeda Galaxy</label>
-
-            </div>
-
-
-            <!-- CROSSHAIR -->
-
-            <div class="ar-crosshair">
-
-                <div class="cross-horizontal"></div>
-
-                <div class="cross-vertical"></div>
-
-                <div class="cross-dot"></div>
-
-            </div>
-
-
-            <!-- COMPASS -->
-
-            <div class="ar-compass">
-
-                <span>N</span>
-
-                <span>E</span>
-
-                <span>S</span>
-
-                <span>W</span>
-
-            </div>
-
-
-            <!-- TOP INFORMATION -->
-
-            <div class="ar-status">
-
-                <span id="sensorStatus">
-                    🧭 Sensors waiting...
-                </span>
-
-                <span id="arHeading">
-                    0°
-                </span>
-
-            </div>
-
-
-            <!-- CLOUD WARNING -->
-
-            <div class="ar-cloud-warning"
-                 id="arCloudWarning">
-
-                ☁ CLOUD COVER DETECTED
-
-            </div>
-
-        </div>
-
-
-        <!-- CAMERA CONTROLS -->
-
-        <div class="ar-controls">
-
-            <button id="sensorBtn">
-                🧭 Enable Sensors
-            </button>
-
-            <button id="arLabelsBtn">
-                ⭐ Labels
-            </button>
-
-            <button id="arCloudBtn">
-                ☁ Clouds
-            </button>
-
-            <button id="switchCameraBtn">
-                🔄 Camera
-            </button>
-
-        </div>
-
-
-        <div class="ar-help">
-
-            Point your phone toward the sky
-            and move slowly.
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =================================================
-     SKY MAP
-================================================== -->
-
-<section class="sky-panel" id="skyPanel">
-
-    <div class="panel-header">
-
-        <div>
-
-            <div class="small-label">
-                LIVE SKY
-            </div>
-
-            <h2>
-                Interactive Sky Map
-            </h2>
-
-        </div>
-
-        <div class="map-actions">
-
-            <button id="cloudBtn">
-                ☁ Clouds
-            </button>
-
-            <button id="labelsBtn">
-                ⭐ Labels
-            </button>
-
-            <button id="maximizeBtn">
-                ⛶
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- SEARCH -->
-
-    <div class="object-search">
-
-        <span>🔍</span>
-
-        <input
-            type="text"
-            id="objectSearch"
-            placeholder="Search 1,000+ celestial objects..."
-            autocomplete="off">
-
-        <button id="clearSearch">
-            ×
+        <button id="objectsBtn">
+            ⭐
+            <span>Objects</span>
         </button>
 
-    </div>
+    </section>
 
 
-    <div class="search-results"
-         id="searchResults">
-    </div>
-
-
-    <!-- SKY -->
-
-    <div class="sky-map"
-         id="skyMap">
-
-        <div class="stars"
-             id="stars">
-        </div>
-
-        <div class="milky-way"></div>
-
-        <div class="cloud-layer"
-             id="cloudLayer">
-
-            <div class="cloud cloud-left">
-                <div class="cloud-hole"></div>
-                <div class="cloud-hole hole-two"></div>
-            </div>
-
-            <div class="cloud cloud-right">
-                <div class="cloud-hole"></div>
-                <div class="cloud-hole hole-two"></div>
-            </div>
-
-            <div class="cloud cloud-bottom">
-                <div class="cloud-hole"></div>
-            </div>
-
-        </div>
-
-
-        <div class="compass north">N</div>
-        <div class="compass east">E</div>
-        <div class="compass south">S</div>
-        <div class="compass west">W</div>
-
-
-        <div class="zenith">
-            ZENITH
-        </div>
-
-
-        <div class="sky-object moon">
-
-            <div class="moon-body"></div>
-
-            <span>Moon</span>
-
-        </div>
-
-
-        <div class="sky-object jupiter">
-
-            <div class="jupiter-body"></div>
-
-            <span>Jupiter</span>
-
-        </div>
-
-
-        <div class="sky-object sirius">
-
-            <div class="bright-star"></div>
-
-            <span>Sirius</span>
-
-        </div>
-
-
-        <div class="sky-object orion">
-
-            <div class="constellation-star a">✦</div>
-            <div class="constellation-star b">✦</div>
-            <div class="constellation-star c">✦</div>
-            <div class="constellation-star d">✦</div>
-
-            <div class="constellation-line l1"></div>
-            <div class="constellation-line l2"></div>
-            <div class="constellation-line l3"></div>
-
-            <span>ORION</span>
-
-        </div>
-
-    </div>
-
-
-    <div class="sky-controls">
-
-        <button id="rotateLeft">◀</button>
-
-        <button id="resetSky">
-            ⟳ Reset
-        </button>
-
-        <button id="rotateRight">▶</button>
-
-        <span>
-            Drag to explore • Scroll to zoom
-        </span>
-
-    </div>
-
-
-    <div class="timeline">
+    <!-- TIMELINE -->
+    <section class="timeline">
 
         <div class="timeline-header">
 
-            <strong>
-                SKY TIMELINE
-            </strong>
+            <span>Sky Time</span>
 
-            <span id="selectedTime">
-                22:00
-            </span>
+            <strong id="timeDisplay">
+                Tonight 20:00
+            </strong>
 
         </div>
 
         <input
-            type="range"
             id="timeSlider"
-            min="0"
+            type="range"
+            min="-12"
             max="12"
-            value="4">
-
-        <div class="time-labels">
-
-            <span>18:00</span>
-            <span>20:00</span>
-            <span>22:00</span>
-            <span>00:00</span>
-            <span>02:00</span>
-            <span>04:00</span>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- OBJECT INFORMATION -->
-
-<section class="object-info-section">
-
-    <div class="object-info">
-
-        <div class="info-icon"
-             id="infoIcon">
-            🔭
-        </div>
-
-        <div>
-
-            <div class="small-label">
-                SELECTED OBJECT
-            </div>
-
-            <h2 id="infoName">
-                Select a celestial object
-            </h2>
-
-            <p id="infoDescription">
-                Search for an object from the
-                1,000+ object catalogue.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="info-data">
-
-        <div>
-            <span>TYPE</span>
-            <strong id="infoType">—</strong>
-        </div>
-
-        <div>
-            <span>CATALOGUE</span>
-            <strong id="infoCatalog">—</strong>
-        </div>
-
-        <div>
-            <span>CONSTELLATION</span>
-            <strong id="infoConstellation">—</strong>
-        </div>
-
-        <div>
-            <span>MAGNITUDE</span>
-            <strong id="infoMagnitude">—</strong>
-        </div>
-
-    </div>
-
-</section>
-
-
-<main class="content">
-
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-
-            <div class="small-label">
-                TONIGHT
-            </div>
-
-            <h2>
-                How clear is the sky?
-            </h2>
-
-        </div>
-
-
-        <div class="dashboard-grid">
-
-            <div class="card">
-
-                <span class="card-label">
-                    SKY CLARITY
-                </span>
-
-                <div class="big-score">
-
-                    <strong id="clarity">
-                        7.9
-                    </strong>
-
-                    <span>/10</span>
-
-                </div>
-
-                <p id="clarityText">
-                    Good conditions for stargazing.
-                </p>
-
-                <div class="progress">
-
-                    <div id="clarityBar"></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <span class="card-label">
-                    VISIBILITY
-                </span>
-
-                <div class="visibility-list">
-
-                    <div>
-                        ⭐ Stars
-                        <strong>High</strong>
-                    </div>
-
-                    <div>
-                        🌌 Deep Sky
-                        <strong>Good</strong>
-                    </div>
-
-                    <div>
-                        🪐 Planets
-                        <strong>Excellent</strong>
-                    </div>
-
-                    <div>
-                        ☁ Haze
-                        <strong>Low</strong>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-
-            <div class="small-label">
-                CLOUD ANALYSIS
-            </div>
-
-            <h2>
-                What's hiding the sky?
-            </h2>
-
-        </div>
-
-
-        <div class="cloud-grid">
-
-            <div class="cloud-card">
-
-                <span>LOW CLOUDS</span>
-
-                <strong id="lowCloud">
-                    12%
-                </strong>
-
-                <div class="mini-bar">
-                    <i id="lowBar"></i>
-                </div>
-
-            </div>
-
-
-            <div class="cloud-card">
-
-                <span>MID CLOUDS</span>
-
-                <strong id="midCloud">
-                    25%
-                </strong>
-
-                <div class="mini-bar">
-                    <i id="midBar"></i>
-                </div>
-
-            </div>
-
-
-            <div class="cloud-card">
-
-                <span>HIGH CLOUDS</span>
-
-                <strong id="highCloud">
-                    18%
-                </strong>
-
-                <div class="mini-bar">
-                    <i id="highBar"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-
-            <div class="small-label">
-                CELESTIAL CATALOGUE
-            </div>
-
-            <h2>
-                Explore the universe.
-            </h2>
-
-        </div>
-
-
-        <div class="catalogue-stats">
-
-            <div class="stat-card">
-
-                <strong id="objectCount">
-                    1000+
-                </strong>
-
-                <span>
-                    Celestial Objects
-                </span>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <strong>
-                    6+
-                </strong>
-
-                <span>
-                    Object Types
-                </span>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <strong>
-                    ∞
-                </strong>
-
-                <span>
-                    Sky Exploration
-                </span>
-
-            </div>
-
+            value="0"
+        >
+
+        <div class="timeline-labels">
+            <span>Now</span>
+            <span>+6h</span>
+            <span>+12h</span>
         </div>
 
     </section>
@@ -744,17 +163,97 @@
 </main>
 
 
-<footer>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
 
-    <strong>
-        🔭 COSMO VISION
-    </strong>
+    <button class="active">
+        🌌
+        <span>Sky</span>
+    </button>
 
-    <span>
-        WHAT CLOUDS HIDE, WE SHOW.
-    </span>
+    <button id="discoverBtn">
+        ✨
+        <span>Discover</span>
+    </button>
 
-</footer>
+    <button id="arNavBtn">
+        📷
+        <span>AR</span>
+    </button>
+
+    <button id="settingsNavBtn">
+        ⚙️
+        <span>Settings</span>
+    </button>
+
+</nav>
+
+
+<!-- SETTINGS PANEL -->
+<div id="settingsPanel" class="panel">
+
+    <div class="panel-header">
+
+        <h2>Settings</h2>
+
+        <button id="closeSettings">×</button>
+
+    </div>
+
+
+    <label>
+        <span>☁ Cloud Overlay</span>
+        <input type="checkbox" id="cloudToggle" checked>
+    </label>
+
+
+    <label>
+        <span>⭐ Star Labels</span>
+        <input type="checkbox" id="starToggle" checked>
+    </label>
+
+
+    <label>
+        <span>🌙 Night Vision</span>
+        <input type="checkbox" id="nightToggle" checked>
+    </label>
+
+
+    <label>
+        <span>🧭 Device Orientation</span>
+        <input type="checkbox" id="orientationToggle">
+    </label>
+
+
+    <button class="setting-button" id="cameraPermission">
+        📷 Enable Camera
+    </button>
+
+
+    <button class="setting-button" id="locationPermission">
+        📍 Use My Location
+    </button>
+
+</div>
+
+
+<!-- AR CAMERA -->
+<div id="cameraScreen" class="camera-screen">
+
+    <video id="camera" autoplay playsinline></video>
+
+    <canvas id="arCanvas"></canvas>
+
+    <div class="ar-title">
+        <b>Cosmo Vision AR</b>
+        <span>Point your phone at the sky</span>
+    </div>
+
+    <button id="closeCamera" class="close-camera">
+        ×
+    </button>
+
+</div>
 
 
 <script src="app.js"></script>
