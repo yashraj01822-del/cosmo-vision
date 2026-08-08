@@ -1,1203 +1,837 @@
-/* =====================================================
+/* =====================================
    COSMO VISION
-   CAMERA AR SKY
-   ===================================================== */
+   Main Application
+===================================== */
 
 
-/* =====================================================
-   EXISTING SKY
-===================================================== */
+/* ---------- CELESTIAL DATABASE ---------- */
 
-const skyMap =
-    document.getElementById("skyMap");
-
-const stars =
-    document.getElementById("stars");
-
-const cloudLayer =
-    document.getElementById("cloudLayer");
-
-
-/* =====================================================
-   CELESTIAL OBJECTS
-===================================================== */
-
-let celestialObjects = [
+const knownObjects = [
 
     {
-        name: "Sirius",
-        catalog: "HIP 32349",
-        type: "Star",
-        constellation: "Canis Major",
-        magnitude: "-1.46",
-        description:
-            "The brightest star in Earth's night sky."
+        name: "Sun",
+        type: "STAR",
+        ra: 0,
+        dec: 0,
+        description: "The star at the center of our Solar System."
+    },
+
+    {
+        name: "Moon",
+        type: "MOON",
+        ra: 6,
+        dec: 20,
+        description: "Earth's natural satellite."
+    },
+
+    {
+        name: "Mercury",
+        type: "PLANET",
+        ra: 8,
+        dec: 5,
+        description: "The smallest planet in the Solar System."
+    },
+
+    {
+        name: "Venus",
+        type: "PLANET",
+        ra: 10,
+        dec: 12,
+        description: "The second planet from the Sun."
+    },
+
+    {
+        name: "Mars",
+        type: "PLANET",
+        ra: 12,
+        dec: -5,
+        description: "The red planet."
     },
 
     {
         name: "Jupiter",
-        catalog: "Solar System",
-        type: "Planet",
-        constellation: "Variable",
-        magnitude: "-2.90",
-        description:
-            "The largest planet in the Solar System."
+        type: "PLANET",
+        ra: 15,
+        dec: -10,
+        description: "The largest planet in our Solar System."
     },
 
     {
-        name: "Orion",
-        catalog: "Constellation",
-        type: "Constellation",
-        constellation: "Orion",
-        magnitude: "—",
-        description:
-            "One of the most recognizable constellations."
+        name: "Saturn",
+        type: "PLANET",
+        ra: 18,
+        dec: -15,
+        description: "The famous ringed planet."
     },
 
     {
-        name: "Pleiades",
-        catalog: "M45",
-        type: "Open Cluster",
-        constellation: "Taurus",
-        magnitude: "1.60",
-        description:
-            "A famous open star cluster."
-    },
-
-    {
-        name: "Andromeda Galaxy",
-        catalog: "M31",
-        type: "Galaxy",
-        constellation: "Andromeda",
-        magnitude: "3.44",
-        description:
-            "The nearest large galaxy to the Milky Way."
-    },
-
-    {
-        name: "Orion Nebula",
-        catalog: "M42",
-        type: "Nebula",
-        constellation: "Orion",
-        magnitude: "4.00",
-        description:
-            "A bright stellar nursery."
+        name: "Sirius",
+        type: "STAR",
+        ra: 6.75,
+        dec: -16.7,
+        description: "The brightest star in Earth's night sky."
     },
 
     {
         name: "Betelgeuse",
-        catalog: "Alpha Orionis",
-        type: "Star",
-        constellation: "Orion",
-        magnitude: "0.42",
-        description:
-            "A red supergiant in Orion."
+        type: "STAR",
+        ra: 5.92,
+        dec: 7.4,
+        description: "A red supergiant in Orion."
+    },
+
+    {
+        name: "Rigel",
+        type: "STAR",
+        ra: 5.24,
+        dec: -8.2,
+        description: "A blue supergiant in Orion."
+    },
+
+    {
+        name: "Vega",
+        type: "STAR",
+        ra: 18.62,
+        dec: 38.8,
+        description: "One of the brightest stars in the northern sky."
     },
 
     {
         name: "Polaris",
-        catalog: "Alpha Ursae Minoris",
-        type: "Star",
-        constellation: "Ursa Minor",
-        magnitude: "1.98",
-        description:
-            "The North Star."
+        type: "STAR",
+        ra: 2.53,
+        dec: 89.2,
+        description: "The North Star."
+    },
+
+    {
+        name: "M31 Andromeda Galaxy",
+        type: "GALAXY",
+        ra: 0.71,
+        dec: 41.3,
+        description: "The nearest major galaxy to the Milky Way."
+    },
+
+    {
+        name: "M42 Orion Nebula",
+        type: "NEBULA",
+        ra: 5.59,
+        dec: -5.45,
+        description: "A bright stellar nursery in Orion."
+    },
+
+    {
+        name: "M45 Pleiades",
+        type: "STAR CLUSTER",
+        ra: 3.79,
+        dec: 24.1,
+        description: "A famous open star cluster."
+    },
+
+    {
+        name: "M13 Hercules Cluster",
+        type: "GLOBULAR CLUSTER",
+        ra: 16.69,
+        dec: 36.5,
+        description: "A bright globular cluster in Hercules."
     }
 
 ];
 
 
-const types = [
+/* ---------- CREATE LARGE SEARCHABLE CATALOG ---------- */
 
-    "Star",
-    "Galaxy",
-    "Nebula",
-    "Open Cluster",
-    "Globular Cluster",
-    "Planetary Nebula"
+/*
+   Creates a local demonstration catalog containing
+   more than 1000 searchable objects.
 
-];
+   For scientifically precise positions, replace this
+   catalog later with Gaia / SIMBAD / NASA data.
+*/
 
+const objects = [...knownObjects];
 
-const constellations = [
+for (let i = objects.length; i <= 1200; i++) {
 
-    "Orion",
-    "Taurus",
-    "Andromeda",
-    "Cassiopeia",
-    "Cygnus",
-    "Lyra",
-    "Scorpius",
-    "Sagittarius",
-    "Leo",
-    "Virgo",
-    "Ursa Major",
-    "Ursa Minor",
-    "Gemini",
-    "Canis Major",
-    "Aquila",
-    "Perseus"
+    objects.push({
 
-];
+        name: `Cosmo Object ${i}`,
 
+        type: [
+            "STAR",
+            "GALAXY",
+            "NEBULA",
+            "STAR CLUSTER"
+        ][i % 4],
 
-for (
-    let i = 1;
-    i <= 1200;
-    i++
-) {
+        ra: Math.random() * 24,
 
-    celestialObjects.push({
-
-        name:
-            `Catalogue Object ${i}`,
-
-        catalog:
-            `CV-${String(i).padStart(4,"0")}`,
-
-        type:
-            types[
-                i % types.length
-            ],
-
-        constellation:
-            constellations[
-                i % constellations.length
-            ],
-
-        magnitude:
-            (2 + (i % 90) / 10)
-                .toFixed(1),
+        dec: Math.random() * 180 - 90,
 
         description:
-            "Celestial catalogue object."
+            "Celestial object from the Cosmo Vision discovery catalog."
 
     });
 
 }
 
 
-document.getElementById(
-    "objectCount"
-).textContent =
-    celestialObjects.length + "+";
+/* ---------- CANVAS ---------- */
+
+const canvas = document.getElementById("skyCanvas");
+
+const ctx = canvas.getContext("2d");
+
+let cloudVisible = true;
+let starsVisible = true;
+
+function resizeCanvas() {
+
+    canvas.width = canvas.clientWidth * devicePixelRatio;
+
+    canvas.height = canvas.clientHeight * devicePixelRatio;
+
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+
+    drawSky();
+}
+
+window.addEventListener("resize", resizeCanvas);
 
 
-/* =====================================================
-   SEARCH
-===================================================== */
+/* ---------- STARS ---------- */
+
+let stars = [];
+
+for (let i = 0; i < 450; i++) {
+
+    stars.push({
+
+        x: Math.random(),
+        y: Math.random(),
+
+        size: Math.random() * 2 + .3,
+
+        brightness: Math.random()
+
+    });
+
+}
+
+
+/* ---------- SKY DRAWING ---------- */
+
+function drawSky() {
+
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+
+    ctx.clearRect(0,0,w,h);
+
+
+    /* Background */
+
+    const gradient =
+        ctx.createRadialGradient(
+            w/2,
+            h/2,
+            20,
+            w/2,
+            h/2,
+            w
+        );
+
+    gradient.addColorStop(0, "#162c50");
+    gradient.addColorStop(0.5, "#081226");
+    gradient.addColorStop(1, "#02040b");
+
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(0,0,w,h);
+
+
+    /* Stars */
+
+    if (starsVisible) {
+
+        stars.forEach(star => {
+
+            ctx.beginPath();
+
+            ctx.arc(
+                star.x * w,
+                star.y * h,
+                star.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                `rgba(255,255,255,${.35 + star.brightness * .65})`;
+
+            ctx.fill();
+
+        });
+
+    }
+
+
+    /* Important objects */
+
+    drawPlanet(w*.76, h*.34, 9, "#d9d9d9", "Venus");
+
+    drawPlanet(w*.46, h*.48, 7, "#ffcb78", "Jupiter");
+
+    drawPlanet(w*.25, h*.27, 6, "#f0f0e8", "Polaris");
+
+
+    /* Clouds */
+
+    if (cloudVisible) {
+
+        drawClouds(w,h);
+
+    }
+
+}
+
+
+/* ---------- CLOUD LAYER ---------- */
+
+function drawClouds(w,h) {
+
+    /*
+       Cloud banks deliberately leave transparent
+       holes so stars remain visible.
+    */
+
+    const cloudGradient =
+        ctx.createLinearGradient(0,0,w,0);
+
+    cloudGradient.addColorStop(
+        0,
+        "rgba(120,135,165,.48)"
+    );
+
+    cloudGradient.addColorStop(
+        .35,
+        "rgba(100,120,150,.20)"
+    );
+
+    cloudGradient.addColorStop(
+        .55,
+        "rgba(100,120,150,0)"
+    );
+
+    cloudGradient.addColorStop(
+        .75,
+        "rgba(100,120,150,.35)"
+    );
+
+    cloudGradient.addColorStop(
+        1,
+        "rgba(120,135,165,.55)"
+    );
+
+
+    ctx.fillStyle = cloudGradient;
+
+    ctx.beginPath();
+
+    ctx.moveTo(0,h*.18);
+
+    ctx.bezierCurveTo(
+        w*.12,h*.05,
+        w*.25,h*.30,
+        w*.38,h*.15
+    );
+
+    ctx.bezierCurveTo(
+        w*.52,h*.05,
+        w*.62,h*.20,
+        w*.75,h*.12
+    );
+
+    ctx.bezierCurveTo(
+        w*.88,h*.03,
+        w*.95,h*.20,
+        w,h*.10
+    );
+
+    ctx.lineTo(w,0);
+
+    ctx.lineTo(0,0);
+
+    ctx.closePath();
+
+    ctx.fill();
+
+
+    /* Lower cloud bank */
+
+    ctx.fillStyle =
+        "rgba(100,120,150,.27)";
+
+    ctx.beginPath();
+
+    ctx.moveTo(0,h);
+
+    ctx.bezierCurveTo(
+        w*.15,h*.75,
+        w*.27,h*.90,
+        w*.40,h*.80
+    );
+
+    ctx.bezierCurveTo(
+        w*.58,h*.92,
+        w*.70,h*.73,
+        w*.82,h*.85
+    );
+
+    ctx.bezierCurveTo(
+        w*.92,h*.74,
+        w*.97,h*.87,
+        w,h*.78
+    );
+
+    ctx.lineTo(w,h);
+
+    ctx.closePath();
+
+    ctx.fill();
+
+}
+
+
+/* ---------- PLANETS ---------- */
+
+function drawPlanet(x,y,size,color,label) {
+
+    ctx.beginPath();
+
+    ctx.arc(x,y,size,0,Math.PI*2);
+
+    ctx.fillStyle = color;
+
+    ctx.shadowBlur = 15;
+
+    ctx.shadowColor = color;
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+
+    if (starsVisible) {
+
+        ctx.fillStyle = "white";
+
+        ctx.font = "11px Arial";
+
+        ctx.fillText(label,x+12,y+4);
+
+    }
+
+}
+
+
+/* ---------- SEARCH ---------- */
 
 const searchInput =
-    document.getElementById(
-        "objectSearch"
-    );
+    document.getElementById("searchInput");
 
-const searchResults =
-    document.getElementById(
-        "searchResults"
-    );
+const results =
+    document.getElementById("searchResults");
+
+function searchObjects() {
+
+    const query =
+        searchInput.value
+        .trim()
+        .toLowerCase();
+
+    results.innerHTML = "";
+
+    if (!query) {
+
+        results.style.display = "none";
+
+        return;
+
+    }
+
+
+    const matches =
+        objects
+        .filter(obj =>
+            obj.name.toLowerCase().includes(query)
+        )
+        .slice(0,8);
+
+
+    matches.forEach(obj => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "result";
+
+        div.innerHTML =
+            `<b>${obj.name}</b>
+             <br>
+             <small>${obj.type}</small>`;
+
+        div.onclick = () => showObject(obj);
+
+        results.appendChild(div);
+
+    });
+
+
+    results.style.display =
+        matches.length ? "block" : "none";
+
+}
 
 
 searchInput.addEventListener(
     "input",
-    function() {
+    searchObjects
+);
 
-        const query =
-            this.value
-                .toLowerCase()
-                .trim();
-
-
-        searchResults.innerHTML = "";
-
-
-        if (!query)
-            return;
-
-
-        const matches =
-            celestialObjects
-                .filter(
-                    object =>
-                        object.name
-                            .toLowerCase()
-                            .includes(query)
-
-                        ||
-
-                        object.catalog
-                            .toLowerCase()
-                            .includes(query)
-
-                        ||
-
-                        object.type
-                            .toLowerCase()
-                            .includes(query)
-
-                        ||
-
-                        object.constellation
-                            .toLowerCase()
-                            .includes(query)
-                )
-                .slice(0,10);
-
-
-        matches.forEach(
-            object => {
-
-                const item =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                item.className =
-                    "search-result";
-
-
-                item.innerHTML = `
-
-                    <span class="result-icon">
-                        ⭐
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            ${object.name}
-                        </strong>
-
-                        <small>
-                            ${object.catalog}
-                            •
-                            ${object.type}
-                            •
-                            ${object.constellation}
-                        </small>
-
-                    </div>
-                `;
-
-
-                item.onclick =
-                    () => {
-
-                        showObject(
-                            object
-                        );
-
-                        searchResults
-                            .innerHTML =
-                            "";
-
-                        searchInput.value =
-                            object.name;
-
-                    };
-
-
-                searchResults.appendChild(
-                    item
-                );
-
-            }
-        );
-
-    }
+document
+    .getElementById("searchBtn")
+    .addEventListener(
+        "click",
+        searchObjects
 );
 
 
-function showObject(object) {
+/* ---------- OBJECT INFORMATION ---------- */
 
-    document.getElementById(
-        "infoName"
-    ).textContent =
-        object.name;
+function showObject(obj) {
 
+    results.style.display = "none";
 
-    document.getElementById(
-        "infoDescription"
-    ).textContent =
-        object.description;
+    document
+        .getElementById("objectInfo")
+        .classList.remove("hidden");
 
+    document
+        .getElementById("objectName")
+        .textContent = obj.name;
 
-    document.getElementById(
-        "infoType"
-    ).textContent =
-        object.type;
+    document
+        .getElementById("objectType")
+        .textContent = obj.type;
 
+    document
+        .getElementById("objectDescription")
+        .textContent = obj.description;
 
-    document.getElementById(
-        "infoCatalog"
-    ).textContent =
-        object.catalog;
+    document
+        .getElementById("objectRA")
+        .textContent = obj.ra.toFixed(2) + "h";
 
-
-    document.getElementById(
-        "infoConstellation"
-    ).textContent =
-        object.constellation;
-
-
-    document.getElementById(
-        "infoMagnitude"
-    ).textContent =
-        object.magnitude;
+    document
+        .getElementById("objectDEC")
+        .textContent = obj.dec.toFixed(2) + "°";
 
 }
 
 
-/* =====================================================
-   STARS
-===================================================== */
+document
+    .getElementById("closeObject")
+    .onclick = () => {
 
-function createStars() {
+        document
+            .getElementById("objectInfo")
+            .classList.add("hidden");
 
-    stars.innerHTML = "";
-
-
-    for (
-        let i = 0;
-        i < 450;
-        i++
-    ) {
-
-        const star =
-            document.createElement(
-                "div"
-            );
+    };
 
 
-        star.className =
-            "star";
-
-
-        star.style.left =
-            Math.random() * 100 +
-            "%";
-
-
-        star.style.top =
-            Math.random() * 100 +
-            "%";
-
-
-        const size =
-            Math.random() * 2.5 +
-            .5;
-
-
-        star.style.width =
-            size + "px";
-
-
-        star.style.height =
-            size + "px";
-
-
-        star.style.opacity =
-            Math.random() * .8 +
-            .2;
-
-
-        stars.appendChild(
-            star
-        );
-
-    }
-
-}
-
-
-createStars();
-
-
-/* =====================================================
-   CLOUD BUTTON
-===================================================== */
-
-let cloudsVisible = true;
-
+/* ---------- CLOUD TOGGLE ---------- */
 
 document
     .getElementById("cloudBtn")
-    .onclick =
-    function() {
+    .onclick = () => {
 
-        cloudsVisible =
-            !cloudsVisible;
+        cloudVisible = !cloudVisible;
 
-
-        cloudLayer.style.opacity =
-            cloudsVisible
-                ? "1"
-                : "0";
+        drawSky();
 
     };
 
 
-/* =====================================================
-   LABEL BUTTON
-===================================================== */
+document
+    .getElementById("cloudToggle")
+    .onchange = e => {
 
-let labelsVisible = true;
+        cloudVisible = e.target.checked;
 
+        drawSky();
+
+    };
+
+
+/* ---------- STAR TOGGLE ---------- */
 
 document
-    .getElementById("labelsBtn")
-    .onclick =
-    function() {
+    .getElementById("starToggle")
+    .onchange = e => {
 
-        labelsVisible =
-            !labelsVisible;
+        starsVisible = e.target.checked;
+
+        drawSky();
+
+    };
 
 
-        document
-            .querySelectorAll(
-                ".sky-object"
-            )
-            .forEach(
-                object => {
+/* ---------- SETTINGS ---------- */
 
-                    object.style.opacity =
-                        labelsVisible
-                            ? "1"
-                            : "0";
+const settingsPanel =
+    document.getElementById("settingsPanel");
 
-                }
+function openSettings() {
+
+    settingsPanel.classList.add("open");
+
+}
+
+function closeSettings() {
+
+    settingsPanel.classList.remove("open");
+
+}
+
+document
+    .getElementById("settingsBtn")
+    .onclick = openSettings;
+
+document
+    .getElementById("settingsNavBtn")
+    .onclick = openSettings;
+
+document
+    .getElementById("closeSettings")
+    .onclick = closeSettings;
+
+
+/* ---------- LOCATION ---------- */
+
+function getLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert("Location is not supported.");
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            const lat =
+                position.coords.latitude.toFixed(3);
+
+            const lon =
+                position.coords.longitude.toFixed(3);
+
+            alert(
+                `Cosmo Vision location:\nLatitude: ${lat}\nLongitude: ${lon}`
             );
 
-    };
+        },
 
+        () => {
 
-/* =====================================================
-   MAXIMIZE
-===================================================== */
+            alert("Location permission was denied.");
 
-document
-    .getElementById("maximizeBtn")
-    .onclick =
-    function() {
+        }
 
-        document
-            .getElementById("skyPanel")
-            .classList.toggle(
-                "maximized"
-            );
-
-    };
-
-
-/* =====================================================
-   EXPLORE
-===================================================== */
-
-document
-    .getElementById("exploreBtn")
-    .onclick =
-    function() {
-
-        document
-            .getElementById("skyPanel")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
-
-    };
-
-
-/* =====================================================
-   CAMERA AR
-===================================================== */
-
-const arSection =
-    document.getElementById(
-        "arSection"
     );
 
-const cameraVideo =
-    document.getElementById(
-        "cameraVideo"
-    );
+}
 
-let cameraStream = null;
+document
+    .getElementById("locationBtn")
+    .onclick = getLocation;
 
-let currentFacingMode =
-    "environment";
+document
+    .getElementById("locationPermission")
+    .onclick = getLocation;
 
 
-/* =====================================================
-   OPEN CAMERA
-===================================================== */
+/* ---------- CAMERA / AR ---------- */
+
+const cameraScreen =
+    document.getElementById("cameraScreen");
+
+const video =
+    document.getElementById("camera");
+
 
 async function openCamera() {
 
-    arSection.classList.add(
-        "active"
-    );
-
-
-    document.body.style.overflow =
-        "hidden";
-
-
     try {
 
-        cameraStream =
-            await navigator
-                .mediaDevices
-                .getUserMedia({
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "environment"
+                },
+                audio: false
+            });
 
-                    video: {
+        video.srcObject = stream;
 
-                        facingMode:
-                            currentFacingMode
-
-                    },
-
-                    audio: false
-
-                });
-
-
-        cameraVideo.srcObject =
-            cameraStream;
-
+        cameraScreen.classList.add("active");
 
     }
 
     catch(error) {
 
-        console.error(error);
-
-
         alert(
-            "Camera permission was not granted. Please allow camera access and try again."
+            "Camera permission is required for AR Sky."
         );
 
     }
 
 }
-
-
-/* =====================================================
-   CAMERA BUTTONS
-===================================================== */
-
-document
-    .getElementById(
-        "cameraTopBtn"
-    )
-    .onclick =
-    openCamera;
-
-
-document
-    .getElementById(
-        "cameraHeroBtn"
-    )
-    .onclick =
-    openCamera;
-
-
-/* =====================================================
-   CLOSE CAMERA
-===================================================== */
-
-document
-    .getElementById(
-        "closeAR"
-    )
-    .onclick =
-    closeCamera;
 
 
 function closeCamera() {
 
-    if (cameraStream) {
+    if (video.srcObject) {
 
-        cameraStream
+        video.srcObject
             .getTracks()
-            .forEach(
-                track =>
-                    track.stop()
-            );
-
-        cameraStream = null;
+            .forEach(track => track.stop());
 
     }
 
-
-    cameraVideo.srcObject =
-        null;
-
-
-    arSection.classList.remove(
-        "active"
-    );
-
-
-    document.body.style.overflow =
-        "";
+    cameraScreen.classList.remove("active");
 
 }
 
-
-/* =====================================================
-   SWITCH CAMERA
-===================================================== */
 
 document
-    .getElementById(
-        "switchCameraBtn"
-    )
-    .onclick =
-    async function() {
+    .getElementById("arBtn")
+    .onclick = openCamera;
 
-        if (cameraStream) {
+document
+    .getElementById("arNavBtn")
+    .onclick = openCamera;
 
-            cameraStream
-                .getTracks()
-                .forEach(
-                    track =>
-                        track.stop()
-                );
+document
+    .getElementById("cameraPermission")
+    .onclick = openCamera;
 
-        }
+document
+    .getElementById("closeCamera")
+    .onclick = closeCamera;
 
 
-        currentFacingMode =
-            currentFacingMode ===
-            "environment"
+/* ---------- TIMELINE ---------- */
 
-                ? "user"
+const slider =
+    document.getElementById("timeSlider");
 
-                : "environment";
+slider.addEventListener("input", () => {
 
+    const value =
+        Number(slider.value);
 
-        await openCamera();
+    let text;
 
-    };
+    if (value === 0) {
 
+        text = "Tonight — Now";
 
-/* =====================================================
-   AR STARS
-===================================================== */
+    } else if (value > 0) {
 
-const arStars =
-    document.getElementById(
-        "arStars"
-    );
+        text = `Tonight +${value}h`;
 
+    } else {
 
-function createARStars() {
-
-    arStars.innerHTML = "";
-
-
-    for (
-        let i = 0;
-        i < 180;
-        i++
-    ) {
-
-        const star =
-            document.createElement(
-                "div"
-            );
-
-
-        star.className =
-            "ar-star-dot";
-
-
-        star.style.left =
-            Math.random() * 100 +
-            "%";
-
-
-        star.style.top =
-            Math.random() * 100 +
-            "%";
-
-
-        const size =
-            Math.random() * 3 +
-            1;
-
-
-        star.style.width =
-            size + "px";
-
-
-        star.style.height =
-            size + "px";
-
-
-        star.style.opacity =
-            Math.random() * .8 +
-            .2;
-
-
-        arStars.appendChild(
-            star
-        );
+        text = `Tonight ${value}h`;
 
     }
 
-}
+    document
+        .getElementById("timeDisplay")
+        .textContent = text;
+
+});
 
 
-createARStars();
+/* ---------- ORIENTATION ---------- */
 
+document
+    .getElementById("orientationToggle")
+    .onchange = async e => {
 
-/* =====================================================
-   DEVICE ORIENTATION
-===================================================== */
-
-let sensorEnabled = false;
-
-let heading = 0;
-
-let pitch = 0;
-
-
-async function enableSensors() {
-
-    try {
-
-        /*
-         iPhone/iPad may require
-         explicit permission.
-        */
+        if (!e.target.checked) return;
 
         if (
+            typeof DeviceOrientationEvent !==
+            "undefined" &&
             typeof DeviceOrientationEvent
-                !== "undefined"
-
-            &&
-
-            typeof DeviceOrientationEvent
-                .requestPermission ===
-                "function"
+                .requestPermission === "function"
         ) {
 
-            const permission =
+            try {
+
                 await DeviceOrientationEvent
                     .requestPermission();
 
+            }
 
-            if (
-                permission !==
-                "granted"
-            ) {
+            catch {
 
-                throw new Error(
-                    "Orientation permission denied"
+                alert(
+                    "Motion permission was denied."
                 );
 
             }
 
         }
 
-
         window.addEventListener(
             "deviceorientation",
-            handleOrientation,
-            true
+            event => {
+
+                /*
+                   This is the foundation for
+                   phone-direction tracking.
+
+                   Full astronomical coordinate
+                   conversion can be added later.
+                */
+
+                const heading =
+                    event.alpha || 0;
+
+                document
+                    .querySelector(".north")
+                    .style.transform =
+                    `rotate(${heading}deg)`;
+
+            }
         );
-
-
-        sensorEnabled =
-            true;
-
-
-        document.getElementById(
-            "sensorStatus"
-        ).textContent =
-            "🧭 Sensors active";
-
-
-    }
-
-    catch(error) {
-
-        console.error(error);
-
-
-        document.getElementById(
-            "sensorStatus"
-        ).textContent =
-            "⚠ Sensors unavailable";
-
-
-        alert(
-            "Motion/orientation permission was not granted."
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   ORIENTATION HANDLER
-===================================================== */
-
-function handleOrientation(event) {
-
-    let alpha =
-        event.alpha;
-
-
-    let beta =
-        event.beta;
-
-
-    let gamma =
-        event.gamma;
-
-
-    /*
-      Prefer Apple's compass heading
-      when available.
-    */
-
-    if (
-        typeof event.webkitCompassHeading
-        === "number"
-    ) {
-
-        heading =
-            event.webkitCompassHeading;
-
-    }
-
-    else if (
-        typeof alpha === "number"
-    ) {
-
-        heading =
-            360 - alpha;
-
-    }
-
-
-    if (
-        typeof beta === "number"
-    ) {
-
-        pitch =
-            beta;
-
-    }
-
-
-    document.getElementById(
-        "arHeading"
-    ).textContent =
-        Math.round(heading) +
-        "°";
-
-
-    updateARSky();
-
-}
-
-
-/* =====================================================
-   MOVE AR SKY
-===================================================== */
-
-function updateARSky() {
-
-    const arSky =
-        document.getElementById(
-            "arSky"
-        );
-
-
-    /*
-      Horizontal movement:
-      phone heading changes
-      star field position.
-    */
-
-    const horizontal =
-        -(heading / 360) *
-        100;
-
-
-    /*
-      Vertical movement.
-    */
-
-    const vertical =
-        Math.max(
-            -30,
-            Math.min(
-                30,
-                pitch - 45
-            )
-        );
-
-
-    arSky.style.transform =
-        `translate(${horizontal}%, ${vertical}px)`;
-
-}
-
-
-/* =====================================================
-   SENSOR BUTTON
-===================================================== */
-
-document
-    .getElementById(
-        "sensorBtn"
-    )
-    .onclick =
-    enableSensors;
-
-
-/* =====================================================
-   AR LABELS
-===================================================== */
-
-let arLabels =
-    true;
-
-
-document
-    .getElementById(
-        "arLabelsBtn"
-    )
-    .onclick =
-    function() {
-
-        arLabels =
-            !arLabels;
-
-
-        document
-            .querySelectorAll(
-                ".ar-object"
-            )
-            .forEach(
-                object => {
-
-                    object.style.display =
-                        arLabels
-                            ? ""
-                            : "none";
-
-                }
-            );
 
     };
 
 
-/* =====================================================
-   AR CLOUDS
-===================================================== */
+/* ---------- INITIALIZE ---------- */
 
-let arClouds =
-    true;
-
-
-document
-    .getElementById(
-        "arCloudBtn"
-    )
-    .onclick =
-    function() {
-
-        arClouds =
-            !arClouds;
-
-
-        document.getElementById(
-            "arCloudWarning"
-        ).style.display =
-            arClouds
-                ? "block"
-                : "none";
-
-    };
-
-
-/* =====================================================
-   LOCATION
-===================================================== */
-
-document
-    .getElementById(
-        "locationBtn"
-    )
-    .onclick =
-    function() {
-
-        if (
-            !navigator.geolocation
-        ) {
-
-            alert(
-                "Location is not supported."
-            );
-
-            return;
-
-        }
-
-
-        navigator
-            .geolocation
-            .getCurrentPosition(
-
-                position => {
-
-                    alert(
-
-                        "Cosmo Vision\n\n" +
-
-                        "Latitude: " +
-
-                        position.coords
-                            .latitude
-                            .toFixed(4) +
-
-                        "\nLongitude: " +
-
-                        position.coords
-                            .longitude
-                            .toFixed(4)
-
-                    );
-
-                },
-
-                () => {
-
-                    alert(
-                        "Location permission denied."
-                    );
-
-                }
-
-            );
-
-    };
-
-
-/* =====================================================
-   SIMPLE SKY DRAG
-===================================================== */
-
-let dragging = false;
-
-let lastX = 0;
-
-let rotation = 0;
-
-
-skyMap.addEventListener(
-    "pointerdown",
-    event => {
-
-        dragging = true;
-
-        lastX =
-            event.clientX;
-
-    }
-);
-
-
-window.addEventListener(
-    "pointermove",
-    event => {
-
-        if (!dragging)
-            return;
-
-
-        const difference =
-            event.clientX -
-            lastX;
-
-
-        rotation +=
-            difference * .2;
-
-
-        skyMap.style.transform =
-            `rotateY(${rotation}deg)`;
-
-
-        lastX =
-            event.clientX;
-
-    }
-);
-
-
-window.addEventListener(
-    "pointerup",
-    () => {
-
-        dragging = false;
-
-    }
-);
-
-
-/* =====================================================
-   TIMELINE
-===================================================== */
-
-const times = [
-
-    "18:00",
-    "19:00",
-    "20:00",
-    "21:00",
-    "22:00",
-    "23:00",
-    "00:00",
-    "01:00",
-    "02:00",
-    "03:00",
-    "04:00",
-    "05:00",
-    "06:00"
-
-];
-
-
-document
-    .getElementById(
-        "timeSlider"
-    )
-    .oninput =
-    function() {
-
-        document.getElementById(
-            "selectedTime"
-        ).textContent =
-            times[
-                Number(this.value)
-            ];
-
-    };
-
+resizeCanvas();
 
 console.log(
-    "🌌 COSMO VISION AR READY"
-);
-
-console.log(
-    "⭐ Objects:",
-    celestialObjects.length
+    "Cosmo Vision loaded with",
+    objects.length,
+    "searchable objects."
 );
